@@ -13,6 +13,14 @@ package com.ibrusniak.main;
  */
 public final class Number {
 
+    /**
+     * For testing purposes only
+     */
+    public static void main(String[] args) {
+        Number n = new Number();
+        System.out.println(n);
+    }
+
     private int[] leftDigits = new int[0];
     private int[] rightDigits = new int[0];
     private boolean dotPresent;
@@ -34,6 +42,21 @@ public final class Number {
         leftDigits[leftDigits.length - 1] = digit;
     }
 
+    @Override
+    public String toString() {
+        String result = "";
+        for (int i = 0; i < leftDigits.length; i++) {
+            result += Integer.toString(leftDigits[i]);
+        }
+        if (dotPresent) {
+            result += ".";
+            for (int i = 0; i < rightDigits.length; i++) {
+                result += Integer.toString(rightDigits[i]);
+            }
+        }
+        return result;
+    }
+
     private void addDigitToLeftArray(int digit) {
         wideningArray(rightDigits);
         rightDigits[rightDigits.length - 1] = digit;
@@ -49,6 +72,10 @@ public final class Number {
         for (int i = 0; i < source.length; i++) {
             target[i] = source[i];
         }
+    }
+
+    private void normalize() {
+        if
     }
 }
 

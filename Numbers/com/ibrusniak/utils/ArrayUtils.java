@@ -1,5 +1,7 @@
 package com.ibrusniak.utils;
 
+import java.util.Arrays;
+
 public final class ArrayUtils {
     
     public static int[] add(int[] src, int num) {
@@ -33,5 +35,12 @@ public final class ArrayUtils {
         }
         return target;
     }
+
+    public static String toString(int[] src) {
+        return
+            Arrays.toString(src)
+            .replaceAll("[\\[\\]]", "");
+    }
 }
+
 

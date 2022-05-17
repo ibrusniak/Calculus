@@ -1,5 +1,6 @@
 package com.ibrusniak.main;
 
+
 import com.ibrusniak.utils.ArrayUtils;
 
 /**
@@ -59,6 +60,13 @@ public final class Number {
         return result;
     }
 
+    public double toDouble() {
+        normalize();
+        String s = ArrayUtils.toString(leftDigits)
+            + (dotPresent ? "." + ArrayUtils.toString(rightDigits): "");
+        return Double.valueOf(s);
+    }
+
     private void normalize() {
         if (rightDigits.length > 0) {
             int[] target = rightDigits;
@@ -76,4 +84,5 @@ public final class Number {
         }
     }
 }
+
 

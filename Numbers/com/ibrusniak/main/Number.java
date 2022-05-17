@@ -1,21 +1,7 @@
 package com.ibrusniak.main;
 
-
-import java.lang.reflect.Constructor;
-
 import com.ibrusniak.utils.ArrayUtils;
 
-/**
- * Number representation.
- * 1234567890.123456789. "leftDigits"."rightDigits"
- * Initially created Number is [0]
- * 
- * Operations:
- *  "addDigit" - adds digit to this number. Depends on flag
- *  "dotPresent" - digits will add to the left of right part
- *  "backSpace" - remove right digit from number
- * 
- */
 public final class Number {
 
     private int[] leftDigits = new int[] {0};

@@ -21,7 +21,7 @@ public final class Number {
     private int[] leftDigits = new int[] {0};
     private int[] rightDigits = new int[0];
     private boolean dotPresent = false;
-    private int maxDigits = ;
+    private int maxDigits;
 
     public Number() {
         this(9);
@@ -32,13 +32,15 @@ public final class Number {
     }
 
     public void digit(int digit) {
-        if (dotPresent) {
-            rightDigits = ArrayUtils.add(rightDigits, digit);
-        } else {
-            if (leftDigits.length == 1 & leftDigits[0] == 0) {
-                leftDigits = new int[0];
+        if (digitsCount() < maxDigits) {
+            if (dotPresent) {
+                rightDigits = ArrayUtils.add(rightDigits, digit);
+            } else {
+                if (leftDigits.length == 1 & leftDigits[0] == 0) {
+                    leftDigits = new int[0];
+                }
+                leftDigits = ArrayUtils.add(leftDigits, digit);
             }
-            leftDigits = ArrayUtils.add(leftDigits, digit);
         }
     }
 
@@ -52,7 +54,9 @@ public final class Number {
     }
 
     public void dot() {
-        dotPresent = true;
+        if (digitsCount() < maxDigits) {
+            dotPresent = true;
+        }
     }
 
     @Override
@@ -87,6 +91,10 @@ public final class Number {
         if (rightDigits.length == 0) {
             dotPresent = false;
         }
+    }
+
+    private int digitsCount() {
+        return rightDigits.length + leftDigits.length;
     }
 }
 

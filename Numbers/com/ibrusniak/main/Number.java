@@ -1,6 +1,8 @@
 package com.ibrusniak.main;
 
 
+import java.lang.reflect.Constructor;
+
 import com.ibrusniak.utils.ArrayUtils;
 
 /**
@@ -19,6 +21,15 @@ public final class Number {
     private int[] leftDigits = new int[] {0};
     private int[] rightDigits = new int[0];
     private boolean dotPresent = false;
+    private int maxDigits = ;
+
+    public Number() {
+        this(9);
+    }
+
+    public Number(int maxDigits) {
+        this.maxDigits = maxDigits;
+    }
 
     public void digit(int digit) {
         if (dotPresent) {

@@ -47,15 +47,9 @@ public final class Number {
     @Override
     public String toString() {
         normalize();
-        String result = "";
-        for (int i = 0; i < leftDigits.length; i++) {
-            result += Integer.toString(leftDigits[i]);
-        }
+        String result = ArrayUtils.toString(leftDigits);
         if (dotPresent) {
-            result += ".";
-            for (int i = 0; i < rightDigits.length; i++) {
-                result += Integer.toString(rightDigits[i]);
-            }
+            result += "." + ArrayUtils.toString(rightDigits);
         }
         return result;
     }

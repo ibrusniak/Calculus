@@ -53,23 +53,7 @@ public class Stack<E> {
     public void clear() {
         elementData = new Object[STEP];
     }
-
-    private int size() {
-        int count = 0;
-        for (int i = 0; i < elementData.length; i++) {
-            if (elementData[i] == null) {
-                break;
-            } else {
-                count++;
-            }
-        }
-        return count;
-    }
     
-    private int capacity() {
-        return elementData.length;
-    }
-
     @SuppressWarnings("unchecked")
     public Stack<E> makeACopy() {
         Stack<E> copy = new Stack<>();
@@ -90,47 +74,23 @@ public class Stack<E> {
             }
         }
         return String.format("[%s] size: %s, capacity: %s"
-            , res, size(), capacity());
+        , res, size(), capacity());
     }
 
-    // TODO: Remove this method
-    /**
-     * For testing purpose only
-     * @param args
-     */
-    public static void main(String[] args) {
-        Stack<Integer> stack = new Stack<>();
-        
-        for (int i = 1; i <= 9; i++) {
-            stack.push(i);
-            System.out.println(stack);
+    private int size() {
+        int count = 0;
+        for (int i = 0; i < elementData.length; i++) {
+            if (elementData[i] == null) {
+                break;
+            } else {
+                count++;
+            }
         }
-
-        System.out.println();
-
-        for (int i = 1; i <= 9; i++) {
-            stack.pop();
-            System.out.println(stack);
-        }
-
-        System.out.println();
-        System.out.println(stack.peek());
-        stack.push(20);
-        stack.push(30);
-        System.out.println(stack.peek());
-        System.out.println(stack);
-        stack.clear();
-        System.out.println(stack);
-        System.out.println(stack.pop());
-        System.out.println();
-
-        stack.push(2);
-        stack.push(3);
-        stack.push(4);
-        Stack<Integer> copy = stack.makeACopy();
-        System.out.println(stack.size());
-        System.out.println(copy.size());
-        System.out.println(copy);
+        return count;
+    }
+    
+    private int capacity() {
+        return elementData.length;
     }
 }
     

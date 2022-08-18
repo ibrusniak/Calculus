@@ -2,14 +2,14 @@
 public class Stack<E> {
     
     private final int STEP = 5;
-    private Object[] elemets = new Object[STEP];
+    private Object[] elementData = new Object[STEP];
     
     public Stack() {}
     
     public void push(E e) {
         int size = size();
         if (size == 0) {
-            elemets[0] = e;
+            elementData[0] = e;
             return;
         }
         
@@ -17,9 +17,9 @@ public class Stack<E> {
         int newCapacity = size == capacity ? capacity + STEP : capacity;
         
         Object[] dest = new Object[newCapacity];
-        System.arraycopy(elemets, 0, dest, 1, size);
+        System.arraycopy(elementData, 0, dest, 1, size);
         dest[0] = e;
-        elemets = dest;
+        elementData = dest;
     }
     
     @SuppressWarnings("unchecked")
@@ -29,14 +29,14 @@ public class Stack<E> {
             return null;
         }
         
-        E res = (E) elemets[0];
+        E res = (E) elementData[0];
         
         int capacity = capacity();
         int newCapacity = capacity - size - 1 > STEP ? capacity - STEP : capacity;
         
         Object[] dest = new Object[newCapacity];
-        System.arraycopy(elemets, 1, dest, 0, size);
-        elemets = dest;
+        System.arraycopy(elementData, 1, dest, 0, size);
+        elementData = dest;
         
         return res;
     }
@@ -47,17 +47,17 @@ public class Stack<E> {
         if (size() == 0) {
             return null;
         }
-        return (E) elemets[0];
+        return (E) elementData[0];
     }
 
     public void clear() {
-        elemets = new Object[STEP];
+        elementData = new Object[STEP];
     }
 
     private int size() {
         int count = 0;
-        for (int i = 0; i < elemets.length; i++) {
-            if (elemets[i] == null) {
+        for (int i = 0; i < elementData.length; i++) {
+            if (elementData[i] == null) {
                 break;
             } else {
                 count++;
@@ -67,16 +67,25 @@ public class Stack<E> {
     }
     
     private int capacity() {
-        return elemets.length;
+        return elementData.length;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Stack<E> makeACopy() {
+        Stack<E> copy = new Stack<>();
+        for (int i = elementData.length - 1; i >= 0; i--) {
+            copy.push((E)elementData[i]);
+        }
+        return copy;
     }
     
     @Override
     public String toString() {
         String res = "";
         boolean first = true;
-        for (int i = 0; i < elemets.length; i++) {
-            if (elemets[i] != null) {
-                res += (first ? "" : ",") + elemets[i].toString();
+        for (int i = 0; i < elementData.length; i++) {
+            if (elementData[i] != null) {
+                res += (first ? "" : ",") + elementData[i].toString();
                 first = false;
             }
         }
@@ -113,6 +122,15 @@ public class Stack<E> {
         stack.clear();
         System.out.println(stack);
         System.out.println(stack.pop());
+        System.out.println();
+
+        stack.push(2);
+        stack.push(3);
+        stack.push(4);
+        Stack<Integer> copy = stack.makeACopy();
+        System.out.println(stack.size());
+        System.out.println(copy.size());
+        System.out.println(copy);
     }
 }
     

@@ -6,6 +6,12 @@ public class Stack<E> {
     
     public Stack() {}
     
+    /**
+     * A standard operation for "stack" data structure.
+     * Places a new element at the head of the stack.
+     * Shifts other elements deeper.
+     * @param e - element
+     */
     public void push(E e) {
         int size = size();
         if (size == 0) {

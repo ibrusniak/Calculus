@@ -42,6 +42,12 @@ public class Tests {
 
     private static void testStackClass() {
         Stack<Integer> stack1 = new Stack<>();
+        println(stack1);
+        for (int i = 0; i < 7; i++) {
+            stack1.push(i + 5);
+        }
+        println(stack1);
+        println(stack1.makeACopy());
     }
 }
 

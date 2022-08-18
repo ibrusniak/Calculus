@@ -3,6 +3,7 @@ import static utils.Console.delimiter;
 import static utils.Console.print;
 import static utils.Console.println;
 import static utils.Console.emptyLine;
+import static utils.ArrayUtils.arrayContainsValue;
     
 /**
  * Tests. For testing other classes
@@ -26,13 +27,13 @@ public class Tests {
         } else {
             switch (args[0]) {
                 case "Stack":
-                    delimiter();
-                    println(args[0]);
-                    emptyLine();
                     testStackClass();
-                    delimiter();
                     break;
             
+                case "ArrayUtils":
+                    testArrayUtils();
+                    break;
+
                 default:
                     println(String.format("%s (%s)\n%s", NO_SUCH_CLASS, args[0], USAGE));
                     break;
@@ -48,6 +49,13 @@ public class Tests {
         }
         println(stack1);
         println(stack1.makeACopy());
+    }
+
+    private static void testArrayUtils() {
+        
+        Integer[] array1 = new Integer[] { 2, 3, 4, 6 };
+        println(arrayContainsValue(array1, 10));
+        println(arrayContainsValue(array1, 2));
     }
 }
 

@@ -26,7 +26,11 @@ public class Tests {
         } else {
             switch (args[0]) {
                 case "Stack":
+                    delimiter();
+                    println(args[0]);
+                    emptyLine();
                     testStackClass();
+                    delimiter();
                     break;
             
                 default:
@@ -37,6 +41,7 @@ public class Tests {
     }
 
     private static void testStackClass() {
+        Stack<Integer> stack1 = new Stack<>();
     }
 }
 

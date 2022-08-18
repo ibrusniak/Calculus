@@ -30,7 +30,6 @@ public class Console {
     public static void delimiter() {
         emptyLine();
         println(DELIMITER);
-        emptyLine();
     }
 }
 

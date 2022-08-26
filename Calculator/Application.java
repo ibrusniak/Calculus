@@ -1,6 +1,7 @@
 
 import java.awt.event.*;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,12 +21,16 @@ public class Application {
         HashMap<Integer, Calculator.Key> keyMapping =
             Calculator.Key.getKeysMapping();
 
-        JFrame frame = new JFrame("Calculator GUI tester");
+        JFrame applicationWindow = new JFrame(calculator.toString() + " (ESC - to exit)");
 
-        frame.setSize(640, 480);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        applicationWindow.setSize(640, 200);
+        applicationWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.addKeyListener(new KeyListener() {
+        JLabel calculatorToString = new JLabel();
+        applicationWindow.add(calculatorToString);
+        calculatorToString.setText(calculator.toString());
+
+        applicationWindow.addKeyListener(new KeyListener() {
 
             @Override
             public void keyTyped(KeyEvent e) {}
@@ -44,13 +49,14 @@ public class Application {
                 }
 
                 calculator.keyPressed(keyMapping.get(keyKode));
+                calculatorToString.setText(calculator.toString());
             }
                 
             @Override
             public void keyReleased(KeyEvent e) {}
         });
 
-        frame.setVisible(true);
+        applicationWindow.setVisible(true);
     }
 }
 
@@ -106,6 +112,11 @@ class Calculator {
 
     public void keyPressed(Key k) {
 
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
 

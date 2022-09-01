@@ -2,12 +2,12 @@
 import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.Map;
+import java.util.HashMap;
 
-public class Application {
+public class Test {
     
     public static void main(String[] args) {
 

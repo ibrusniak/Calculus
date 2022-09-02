@@ -9,11 +9,13 @@ import java.util.logging.Level;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Test {
-    
+
     public static void main(String[] args) {
 
         Logger logger = Logger.getAnonymousLogger();
@@ -38,15 +40,16 @@ public class Test {
         calculatorToString.addKeyListener(new KeyListener() {
 
             @Override
-            public void keyTyped(KeyEvent e) {}
-            
+            public void keyTyped(KeyEvent e) {
+            }
+
             @Override
             public void keyPressed(KeyEvent e) {
 
                 int keyKode = e.getKeyCode();
 
                 logger.info(String.format("Pressed: code: %s, Key: %s",
-                keyKode, keyMapping.get(keyKode)));
+                        keyKode, keyMapping.get(keyKode)));
 
                 if (keyKode == 27) {
                     logger.info("Exiting...");
@@ -56,11 +59,11 @@ public class Test {
                 calculator.keyPressed(keyMapping.get(keyKode));
                 calculatorToString.setText(calculator.toString());
             }
-                
+
             @Override
             public void keyReleased(KeyEvent e) {
 
-	}
+            }
         });
 
         applicationWindow.setVisible(true);
@@ -69,33 +72,44 @@ public class Test {
     public static HashMap<Integer, Calculator.Key> getKeysMapping() {
 
         HashMap<Integer, Calculator.Key> mapping = new HashMap<>();
-        Calculator.Key[] digitKeys = Calculator.Key.getDigits();
+
+        Calculator.Key[] digitKeys = new Calculator.Key[] {
+            Calculator.Key.ZERO, 
+            Calculator.Key.ONE, 
+            Calculator.Key.TWO, 
+            Calculator.Key.THREE, 
+            Calculator.Key.FOUR, 
+            Calculator.Key.FIVE, 
+            Calculator.Key.SIX, 
+            Calculator.Key.SEVEN, 
+            Calculator.Key.EIGHT, 
+            Calculator.Key.NINE, 
+        };
 
         /*
-        * NumPad: 0-9, codes: 96-105
-        * Standard keyboard: 0-9, codes: 48-57
-        */
+         * NumPad: 0-9, codes: 96-105
+         * Standard keyboard: 0-9, codes: 48-57
+         */
         for (int i = 48, j = 96, index = 0; i <= 57; i++, j++, index++) {
             mapping.put(i, digitKeys[index]);
             mapping.put(j, digitKeys[index]);
         }
 
         mapping.putAll(Map.<Integer, Calculator.Key>of(
-            107, Calculator.Key.ADDITION,
-            109, Calculator.Key.SUBSTRATION,
-            106, Calculator.Key.MULTIPLICATION,
-            111, Calculator.Key.DIVISION
-        ));
-        
+                107, Calculator.Key.ADDITION,
+                109, Calculator.Key.SUBSTRATION,
+                106, Calculator.Key.MULTIPLICATION,
+                111, Calculator.Key.DIVISION));
+
         mapping.putAll(Map.<Integer, Calculator.Key>of(
-            110, Calculator.Key.DECIMAL_DOT,
-            10, Calculator.Key.EQUALS,
-            78, Calculator.Key.NEGATIVE_NUMBER,
-            79, Calculator.Key.OFF,
-            67, Calculator.Key.CLEAR_ALL
-        ));
-        
+                110, Calculator.Key.DECIMAL_DOT,
+                10, Calculator.Key.EQUALS,
+                78, Calculator.Key.NEGATIVE_NUMBER,
+                79, Calculator.Key.OFF,
+                67, Calculator.Key.CLEAR_ALL));
+
         mapping.put(27, Calculator.Key.OFF);
+        mapping.put(8, Calculator.Key.BACKSPACE);
 
         return mapping;
     }
@@ -107,39 +121,39 @@ class Calculator {
 
         ZERO, ONE, TWO, THREE,
         FOUR, FIVE, SIX, SEVEN,
-        EIGHT, NINE, 
+        EIGHT, NINE,
 
         ADDITION, SUBSTRATION, MULTIPLICATION, DIVISION,
-        
+
         DECIMAL_DOT, EQUALS, NEGATIVE_NUMBER,
-        CLEAR_ALL, OFF;
+        CLEAR_ALL, OFF, BACKSPACE;
+    }
 
-        public static Key[] getDigits() {
-            return new Key[] {
-                ZERO, ONE, TWO, THREE,
-                FOUR, FIVE, SIX, SEVEN,
-                EIGHT, NINE, 
-            };
+    private static ArrayList<Key> digitKeys = new ArrayList<>();
+    private static ArrayList<Key> opKeys = new ArrayList<>();
+    private static HashMap<Key, Character> KeyCharacterMapping
+        = new HashMap<>();
+
+    static {
+
+        Key[] arr = Key.values();
+        for (int i = 0; i <= 9; i++) {
+            digitKeys.add(arr[i]);
         }
 
-        public static Key[] getOperations() {
-            return new Key[] {
-                ADDITION, SUBSTRATION, MULTIPLICATION, DIVISION,
-            };
-        }
-
-        public static HashMap<Key, Character> getKeyCharMapping() {
-
-            HashMap<Key, Character> mapping = new HashMap<>();
-            Key[] digits = getDigits();
-
-            char ch = '0';
-            for (int i = 0; i < 10; i++) {
-                mapping.put(digits[i], ch);
-                ch++;
-            }
-            return mapping;
-        }
+        Collections.addAll(opKeys, Key.ADDITION,
+                Key.SUBSTRATION, Key.MULTIPLICATION, Key.DIVISION);
+        
+        KeyCharacterMapping.put(Key.ZERO, '0');
+        KeyCharacterMapping.put(Key.ONE, '1');
+        KeyCharacterMapping.put(Key.TWO, '2');
+        KeyCharacterMapping.put(Key.THREE, '3');
+        KeyCharacterMapping.put(Key.FOUR, '4');
+        KeyCharacterMapping.put(Key.FIVE, '5');
+        KeyCharacterMapping.put(Key.SIX, '6');
+        KeyCharacterMapping.put(Key.SEVEN, '7');
+        KeyCharacterMapping.put(Key.EIGHT, '8');
+        KeyCharacterMapping.put(Key.NINE, '9');
     }
 
     private Register screen;
@@ -151,29 +165,71 @@ class Calculator {
     public Calculator(int screenCapacity) {
         screen = new Register(screenCapacity);
     }
-    
+
     public void keyPressed(Key key) {
 
-        
+        if (key == null) {
+            return;
+        }
+
+        if (digitKeys.contains(key)) {
+            screen.addDigit(KeyCharacterMapping.get(key));
+        } else if (opKeys.contains(key)) {
+
+        } else {
+
+            switch (key) {
+
+                case OFF:
+                    System.exit(0);
+                    break;
+            
+                case CLEAR_ALL:
+                    clearAll();
+                    break;
+
+                case NEGATIVE_NUMBER:
+                    screen.setResetNegative();
+                    break;
+
+                case DECIMAL_DOT:
+                    screen.addDigit('.');
+                    break;
+
+                case EQUALS:
+                    equalsPressed();
+                    break;
+                
+                case BACKSPACE:
+                    screen.backSpace();
+                    break;
+            }
+        }
     }
 
     @Override
     public String toString() {
-        return
-            "Screen: " + screen;
+        return "Screen: " + screen;
+    }
+
+    private void clearAll() {
+        screen.reset();
+    }
+
+    private void equalsPressed() {
+
     }
 }
 
 class Register {
 
-    private  ArrayDeque<Character> elementData;
+    private ArrayDeque<Character> elementData;
     private boolean negative = false;
     private int registerCapacity;
 
-    private List<Character> allowedCharacters
-        = Arrays.asList(new Character[] {
+    private List<Character> allowedCharacters = Arrays.asList(new Character[] {
             '.', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
-        });
+    });
 
     public Register() {
 
@@ -181,9 +237,9 @@ class Register {
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
     }
-    
+
     public Register(int capacity) {
-        
+
         registerCapacity = capacity < 2 ? 12 : capacity;
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
@@ -212,7 +268,7 @@ class Register {
     }
 
     public void addDigit(Character ch) {
-        
+
         if (!allowedCharacters.contains(ch) || elementData.size() == registerCapacity) {
             return;
         }
@@ -221,11 +277,11 @@ class Register {
         if (elementData.size() == 1 & elementData.getLast() == '0') {
 
             switch (ch) {
-                
-                case '0' :
+
+                case '0':
                     return;
 
-                case '.' :
+                case '.':
                     elementData.addLast(ch);
                     return;
 
@@ -237,20 +293,20 @@ class Register {
         } else {
 
             if (ch.equals('.') & elementData.contains('.')) {
-                    return;
+                return;
             }
 
             elementData.addLast(ch);
         }
     }
 
-    public void setNegative() {
+    public void setResetNegative() {
         negative = !negative;
     }
 
     @Override
     public String toString() {
-        
+
         String s = "";
         for (Character c : elementData) {
             s += String.valueOf(c);
@@ -258,4 +314,3 @@ class Register {
         return s;
     }
 }
-

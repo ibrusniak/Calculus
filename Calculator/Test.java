@@ -157,13 +157,22 @@ class Calculator {
     }
 
     private Register screen;
+    private Register registerX;
+    private Register registerY;
+    private Key operation;
 
     public Calculator() {
+
         screen = new Register(12);
+        registerX = new Register(12);
+        registerY = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
+
         screen = new Register(screenCapacity);
+        registerX = new Register(screenCapacity);
+        registerY = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
@@ -175,7 +184,7 @@ class Calculator {
         if (digitKeys.contains(key)) {
             screen.addDigit(KeyCharacterMapping.get(key));
         } else if (opKeys.contains(key)) {
-
+            operationKeyPresse(key);
         } else {
 
             switch (key) {
@@ -209,15 +218,27 @@ class Calculator {
 
     @Override
     public String toString() {
-        return "Screen: " + screen;
+        return
+            "Operation: " + operation
+            + "\n\nRegister X: " + registerX
+                + "\nRegister Y: " + registerY
+                    + "\n\nScreen: " + screen;
     }
 
     private void clearAll() {
+
         screen.reset();
+        registerX.reset();
+        registerY.reset();
     }
 
     private void equalsPressed() {
 
+    }
+
+    private void operationKeyPresse(Key key) {
+        operation = key;
+        screen.copyTo(registerX);
     }
 }
 
@@ -273,8 +294,7 @@ class Register {
             return;
         }
 
-        // Means screen contains only initial zero
-        if (elementData.size() == 1 & elementData.getLast() == '0') {
+        if (isBlank()) {
 
             switch (ch) {
 
@@ -300,8 +320,30 @@ class Register {
         }
     }
 
+    /**
+     * isBlank. 'Blank screen' means it has only one digit - '0'
+     * @return - boolean
+     */
+    public boolean isBlank() {
+        
+        return
+            elementData.size() == 1
+                & elementData.getLast() == '0';
+    }
+
     public void setResetNegative() {
         negative = !negative;
+    }
+
+    public void copyTo(Register target) {
+        
+        target.reset();
+        if (negative) {
+            target.setResetNegative();
+        }
+        for (Character ch : elementData) {
+            target.addDigit(ch);
+        }
     }
 
     @Override
@@ -314,3 +356,4 @@ class Register {
         return s;
     }
 }
+

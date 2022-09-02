@@ -23,8 +23,7 @@ public class Test {
 
         Calculator calculator = new Calculator();
 
-        HashMap<Integer, Calculator.Key> keyMapping =
-            Calculator.Key.getKeysMapping();
+        HashMap<Integer, Calculator.Key> keyMapping = getKeysMapping();
 
         JFrame applicationWindow = new JFrame("Calculator class tester (ESC - to exit)");
 
@@ -39,9 +38,7 @@ public class Test {
         calculatorToString.addKeyListener(new KeyListener() {
 
             @Override
-            public void keyTyped(KeyEvent e) {
-
-	}
+            public void keyTyped(KeyEvent e) {}
             
             @Override
             public void keyPressed(KeyEvent e) {
@@ -68,312 +65,197 @@ public class Test {
 
         applicationWindow.setVisible(true);
     }
+
+    public static HashMap<Integer, Calculator.Key> getKeysMapping() {
+
+        HashMap<Integer, Calculator.Key> mapping = new HashMap<>();
+        Calculator.Key[] digitKeys = Calculator.Key.getDigits();
+
+        /*
+        * NumPad: 0-9, codes: 96-105
+        * Standard keyboard: 0-9, codes: 48-57
+        */
+        for (int i = 48, j = 96, index = 0; i <= 57; i++, j++, index++) {
+            mapping.put(i, digitKeys[index]);
+            mapping.put(j, digitKeys[index]);
+        }
+
+        mapping.putAll(Map.<Integer, Calculator.Key>of(
+            107, Calculator.Key.ADDITION,
+            109, Calculator.Key.SUBSTRATION,
+            106, Calculator.Key.MULTIPLICATION,
+            111, Calculator.Key.DIVISION
+        ));
+        
+        mapping.putAll(Map.<Integer, Calculator.Key>of(
+            110, Calculator.Key.DECIMAL_DOT,
+            10, Calculator.Key.EQUALS,
+            78, Calculator.Key.NEGATIVE_NUMBER,
+            79, Calculator.Key.OFF,
+            67, Calculator.Key.CLEAR_ALL
+        ));
+        
+        mapping.put(27, Calculator.Key.OFF);
+
+        return mapping;
+    }
 }
 
 class Calculator {
 
-    private ArrayDeque<Character> screen = new ArrayDeque<>();
-    private ArrayDeque<Character> register = new ArrayDeque<>();
-
-    private Key lastPressedOperation = null;
-
-    private boolean justPressedOperationKey = false;
-    private boolean isDotPresent = false;
-    private boolean isOnlyZero = true;
-
-    public Calculator() {
-        clearAll();
-    }
-
     public static enum Key {
 
-        // NOTE: Do not change order from KEY_ADDITION to KEY_NINE
-        KEY_ADDITION, KEY_SUBSTRATION, KEY_MULTIPLICATION, KEY_DIVISION,
+        ZERO, ONE, TWO, THREE,
+        FOUR, FIVE, SIX, SEVEN,
+        EIGHT, NINE, 
 
-        KEY_ZERO, KEY_ONE, KEY_TWO, KEY_THREE,
-        KEY_FOUR, KEY_FIVE, KEY_SIX, KEY_SEVEN,
-        KEY_EIGHT, KEY_NINE, 
+        ADDITION, SUBSTRATION, MULTIPLICATION, DIVISION,
+        
+        DECIMAL_DOT, EQUALS, NEGATIVE_NUMBER,
+        CLEAR_ALL, OFF;
 
-        KEY_DECIMAL_DOT, KEY_EQUALS, KEY_NEGATIVE_NUMBER,
-        KEY_CLEAR_ALL, KEY_OFF;
+        public static Key[] getDigits() {
+            return new Key[] {
+                ZERO, ONE, TWO, THREE,
+                FOUR, FIVE, SIX, SEVEN,
+                EIGHT, NINE, 
+            };
+        }
 
-        public static List<Key> digits = Arrays.asList(new Key[] {
-            KEY_ZERO, KEY_ONE, KEY_TWO, KEY_THREE,
-            KEY_FOUR, KEY_FIVE, KEY_SIX, KEY_SEVEN,
-            KEY_EIGHT, KEY_NINE
-        });
+        public static Key[] getOperations() {
+            return new Key[] {
+                ADDITION, SUBSTRATION, MULTIPLICATION, DIVISION,
+            };
+        }
 
-        public static List<Key> operations = Arrays.asList(new Key[] {
-            KEY_ADDITION, KEY_SUBSTRATION, KEY_MULTIPLICATION, KEY_DIVISION
-        });
+        public static HashMap<Key, Character> getKeyCharMapping() {
 
-        public static List<Key> otherKeys = Arrays.asList(new Key[] {
-            KEY_DECIMAL_DOT, KEY_EQUALS, KEY_NEGATIVE_NUMBER,
-            KEY_CLEAR_ALL, KEY_OFF
-        });
+            HashMap<Key, Character> mapping = new HashMap<>();
+            Key[] digits = getDigits();
 
-        public static HashMap<Integer, Key> getKeysMapping() {
-
-            HashMap<Integer, Key> keysMapping = new HashMap<>();
-
-            /*
-             * NumPad: 0-9, codes: 96-105
-             * Standard keyboard: 0-9, codes: 48-57
-             */
-            int position = 4;
-            Key[] values = Key.values();
-            for (int i = 96, j = 48; i <= 105; i++, j++) {
-                keysMapping.put(i, values[position]);
-                keysMapping.put(j, values[position]);
-                position++;
+            char ch = '0';
+            for (int i = 0; i < 10; i++) {
+                mapping.put(digits[i], ch);
+                ch++;
             }
-
-            keysMapping.putAll(Map.<Integer, Key>of(
-                107, KEY_ADDITION,
-                109, KEY_SUBSTRATION,
-                106, KEY_MULTIPLICATION,
-                111, KEY_DIVISION
-            ));
-
-            keysMapping.putAll(Map.<Integer, Key>of(
-                110, KEY_DECIMAL_DOT,
-                10, KEY_EQUALS,
-                78, KEY_NEGATIVE_NUMBER,
-                79, KEY_OFF,
-                67, KEY_CLEAR_ALL
-            ));
-
-            keysMapping.put(27, KEY_OFF);
-
-            return keysMapping;
+            return mapping;
         }
     }
 
+    private Register screen;
+
+    public Calculator() {
+        screen = new Register(12);
+    }
+
+    public Calculator(int screenCapacity) {
+        screen = new Register(screenCapacity);
+    }
+    
     public void keyPressed(Key key) {
 
-        if (Key.digits.contains(key)) {
-            digitKeyPressed(key);
-        } else if (Key.operations.contains(key)) {
-            operationKeyPressed(key);
-        } else if (Key.otherKeys.contains(key)) {
-            otherKeyPressed(key);
-        }
+        
     }
 
     @Override
     public String toString() {
-
-        String _screen = "";
-        for (Character c : screen) {
-            _screen += String.valueOf(c);
-        }
-        String _register = "";
-        for (Character c : register) {
-            _register += String.valueOf(c);
-        }
-        return super.toString()
-            + "\n\nLast pressed operation key: " + lastPressedOperation
-            + "\n\njust pressed operation key: " + justPressedOperationKey
-            + "\n\nRegister: " + _register
-            + "\n\nScreen: " + _screen;
-    }
-
-    private void digitKeyPressed(Key key) {
-    
-        switch (key) {
-            
-            case KEY_ZERO:
-                zero();
-                break;
-
-            case KEY_ONE:
-                one();
-                break;
-
-            case KEY_TWO:
-                two();
-                break;
-
-            case KEY_THREE:
-                three();
-                break;
-
-            case KEY_FOUR:
-                four();
-                break;
-            
-            case KEY_FIVE:
-                five();
-                break;
-
-            case KEY_SIX:
-                six();
-                break;
-
-            case KEY_SEVEN:
-                seven();
-                break;
-
-            case KEY_EIGHT:
-                eight();
-                break;
-
-            case KEY_NINE:
-                nine();
-                break;
-        }
-    }
-
-    private void operationKeyPressed(Key key) {
-        
-        lastPressedOperation = key;
-        justPressedOperationKey = true;
-    }
-
-    private void otherKeyPressed(Key key) {
-        
-        switch (key) {
-
-            case KEY_DECIMAL_DOT:
-                decimalDot();
-                break;
-
-            case KEY_EQUALS:
-                equals();
-                break;
-
-            case KEY_NEGATIVE_NUMBER:
-                negativeNumber();
-                break;
-
-            case KEY_CLEAR_ALL:
-                clearAll();
-                break;
-
-            case KEY_OFF:
-                off();
-                break;
-        }
-    }
-
-    private void zero() {
-        if (!isOnlyZero || isDotPresent) {
-            screen.addLast('0');
-        }
-    }
-    
-    private void one() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('1');
-        isOnlyZero = false;
-	}
-    
-    private void two() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('2');
-        isOnlyZero = false;
-	}
-    
-    private void three() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('3');
-        isOnlyZero = false;
-	}
-    
-    private void four() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('4');
-        isOnlyZero = false;
-	}
-    
-    private void five() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('5');
-        isOnlyZero = false;
-	}
-    
-    private void six() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('6');
-        isOnlyZero = false;
-	}
-    
-    private void seven() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('7');
-        isOnlyZero = false;
-	}
-    
-    private void eight() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('8');
-        isOnlyZero = false;
-	}
-    
-    private void nine() {
-
-        if (isOnlyZero) {
-            screen.clear();
-        }
-        screen.addLast('9');
-        isOnlyZero = false;
-	}
-
-    private void decimalDot() {
-
-        if (!isDotPresent) {
-            screen.addLast('.');
-            isDotPresent = true;
-        }
-	}
-
-    private void equals() {
-
-	}
-
-    private void negativeNumber() {
-
-	}
-
-    private void clearAll() {
-
-        register.clear();
-        screen.clear();
-        screen.addLast('0');
-        register.addLast('0');
-        lastPressedOperation = null;
-        justPressedOperationKey = false;
-        isDotPresent = false;
-        isOnlyZero = true;
-    }
-
-    private void off() {
-        System.exit(0);
+        return
+            "Screen: " + screen;
     }
 }
 
+class Register {
+
+    private  ArrayDeque<Character> elementData;
+    private boolean negative = false;
+    private int registerCapacity;
+
+    private List<Character> allowedCharacters
+        = Arrays.asList(new Character[] {
+            '.', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+        });
+
+    public Register() {
+
+        registerCapacity = 12;
+        elementData = new ArrayDeque<>(registerCapacity);
+        reset();
+    }
+    
+    public Register(int capacity) {
+        
+        registerCapacity = capacity < 2 ? 12 : capacity;
+        elementData = new ArrayDeque<>(registerCapacity);
+        reset();
+    }
+
+    public void reset() {
+
+        elementData.clear();
+        elementData.addLast('0');
+        negative = false;
+    }
+
+    public void backSpace() {
+
+        if (elementData.size() == 1) {
+            elementData.clear();
+            elementData.addLast('0');
+            return;
+        }
+
+        elementData.removeLast();
+
+        if (elementData.getLast() == '.') {
+            elementData.removeLast();
+        }
+    }
+
+    public void addDigit(Character ch) {
+        
+        if (!allowedCharacters.contains(ch) || elementData.size() == registerCapacity) {
+            return;
+        }
+
+        // Means screen contains only initial zero
+        if (elementData.size() == 1 & elementData.getLast() == '0') {
+
+            switch (ch) {
+                
+                case '0' :
+                    return;
+
+                case '.' :
+                    elementData.addLast(ch);
+                    return;
+
+                default:
+                    elementData.clear();
+                    elementData.addLast(ch);
+                    return;
+            }
+        } else {
+
+            if (ch.equals('.') & elementData.contains('.')) {
+                    return;
+            }
+
+            elementData.addLast(ch);
+        }
+    }
+
+    public void setNegative() {
+        negative = !negative;
+    }
+
+    @Override
+    public String toString() {
+        
+        String s = "";
+        for (Character c : elementData) {
+            s += String.valueOf(c);
+        }
+        return s;
+    }
+}
 

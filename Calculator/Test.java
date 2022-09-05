@@ -17,7 +17,6 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
-
         Logger logger = Logger.getAnonymousLogger();
         logger.setLevel(Level.ALL);
 
@@ -38,10 +37,8 @@ public class Test {
         calculatorToString.setText(calculator.toString());
 
         calculatorToString.addKeyListener(new KeyListener() {
-
             @Override
-            public void keyTyped(KeyEvent e) {
-            }
+            public void keyTyped(KeyEvent e) {}
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -61,16 +58,13 @@ public class Test {
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
+            public void keyReleased(KeyEvent e) {}
         });
 
         applicationWindow.setVisible(true);
     }
 
     public static HashMap<Integer, Calculator.Key> getKeysMapping() {
-
         HashMap<Integer, Calculator.Key> mapping = new HashMap<>();
 
         Calculator.Key[] digitKeys = new Calculator.Key[] {
@@ -116,9 +110,7 @@ public class Test {
 }
 
 class Calculator {
-
     public static enum Key {
-
         ZERO, ONE, TWO, THREE,
         FOUR, FIVE, SIX, SEVEN,
         EIGHT, NINE,
@@ -135,7 +127,6 @@ class Calculator {
         = new HashMap<>();
 
     static {
-
         Key[] arr = Key.values();
         for (int i = 0; i <= 9; i++) {
             digitKeys.add(arr[i]);
@@ -162,19 +153,16 @@ class Calculator {
     private boolean showResult = false;
 
     public Calculator() {
-
         screen = new Register(12);
         registerX = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
-
         screen = new Register(screenCapacity);
         registerX = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
-
         if (key == null) {
             return;
         }
@@ -186,27 +174,21 @@ class Calculator {
         } else {
 
             switch (key) {
-
                 case OFF:
                     System.exit(0);
                     break;
-            
                 case CLEAR_ALL:
                     clearAll();
                     break;
-
                 case NEGATIVE_NUMBER:
                     screen.setResetNegative();
                     break;
-
                 case DECIMAL_DOT:
                     screen.addDigit('.');
                     break;
-
                 case EQUALS:
                     equalsPressed();
                     break;
-                
                 case BACKSPACE:
                     screen.backSpace();
                     break;
@@ -223,14 +205,12 @@ class Calculator {
     }
 
     private void clearAll() {
-
         screen.reset();
         registerX.reset();
         showResult = false;
     }
 
     private void equalsPressed() {
-
         Register result = applyOperation(registerX, screen, operation);
         result.copyTo(screen);
     }
@@ -254,19 +234,16 @@ class Calculator {
     }
 
     private Register addition(Register r1, Register r2) {
-
         Register firstOperand = new Register(r1.getRegisterCapacity());
         r1.copyTo(firstOperand);
         Register secondOperand = new Register(r2.getRegisterCapacity());
         r2.copyTo(secondOperand);
         Register result = Register.sum(firstOperand, secondOperand);
-
         return result;
     }
 }
 
 class Register {
-
     private ArrayDeque<Character> elementData;
     private boolean negative = false;
     private int registerCapacity;
@@ -276,58 +253,47 @@ class Register {
     });
 
     public Register() {
-
         registerCapacity = 12;
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
     }
 
     public Register(int capacity) {
-
         registerCapacity = capacity < 2 ? 12 : capacity;
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
     }
 
     public void reset() {
-
         elementData.clear();
         elementData.addLast('0');
         negative = false;
     }
 
     public void backSpace() {
-
         if (elementData.size() == 1) {
             elementData.clear();
             elementData.addLast('0');
             return;
         }
-
         elementData.removeLast();
-
         if (elementData.getLast() == '.') {
             elementData.removeLast();
         }
     }
 
     public void addDigit(Character ch) {
-
         if (!allowedCharacters.contains(ch) || elementData.size() == registerCapacity) {
             return;
         }
-
         if (isBlank()) {
 
             switch (ch) {
-
                 case '0':
                     return;
-
                 case '.':
                     elementData.addLast(ch);
                     return;
-
                 default:
                     elementData.clear();
                     elementData.addLast(ch);
@@ -338,7 +304,6 @@ class Register {
             if (ch.equals('.') & elementData.contains('.')) {
                 return;
             }
-
             elementData.addLast(ch);
         }
     }
@@ -348,7 +313,6 @@ class Register {
      * @return - boolean
      */
     public boolean isBlank() {
-        
         return
             elementData.size() == 1
                 & elementData.getLast() == '0';
@@ -359,7 +323,6 @@ class Register {
     }
 
     public void copyTo(Register target) {
-        
         target.reset();
         if (negative) {
             target.setResetNegative();
@@ -371,7 +334,6 @@ class Register {
 
     @Override
     public String toString() {
-
         String s = "";
         for (Character c : elementData) {
             s += String.valueOf(c);
@@ -388,20 +350,14 @@ class Register {
     }
 
     public static Register sum(Register r1, Register r2) {
-
         Register result = new Register(r1.getRegisterCapacity());
-        System.out.println("here0");
         if (r1.isBlank() && r2.isBlank()) {
-            System.out.println("here1");
             return result;
         } else if (r1.isBlank() && !r2.isBlank()) {
-            System.out.println("here2");
             r2.copyTo(result);
         } else if (!r1.isBlank() && r2.isBlank()) {
-            System.out.println("here3");
             r1.copyTo(result);
         }
-
         return result;
     }
 }

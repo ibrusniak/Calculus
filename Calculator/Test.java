@@ -158,21 +158,19 @@ class Calculator {
 
     private Register screen;
     private Register registerX;
-    private Register registerY;
     private Key operation;
+    private boolean showResult = false;
 
     public Calculator() {
 
         screen = new Register(12);
         registerX = new Register(12);
-        registerY = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
 
         screen = new Register(screenCapacity);
         registerX = new Register(screenCapacity);
-        registerY = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
@@ -182,7 +180,7 @@ class Calculator {
         }
 
         if (digitKeys.contains(key)) {
-            screen.addDigit(KeyCharacterMapping.get(key));
+            digitKeyPressed(key);
         } else if (opKeys.contains(key)) {
             operationKeyPresse(key);
         } else {
@@ -221,7 +219,6 @@ class Calculator {
         return
             "Operation: " + operation
             + "\n\nRegister X: " + registerX
-                + "\nRegister Y: " + registerY
                     + "\n\nScreen: " + screen;
     }
 
@@ -229,16 +226,42 @@ class Calculator {
 
         screen.reset();
         registerX.reset();
-        registerY.reset();
+        showResult = false;
     }
 
     private void equalsPressed() {
 
+        Register result = applyOperation(registerX, screen, operation);
+        result.copyTo(screen);
+    }
+
+    private void digitKeyPressed(Key key) {
+        if (operation != null && !registerX.isBlank() && showResult) {
+            screen.reset();
+            showResult = false;
+        }
+        screen.addDigit(KeyCharacterMapping.get(key));
     }
 
     private void operationKeyPresse(Key key) {
         operation = key;
+        showResult = true;
         screen.copyTo(registerX);
+    }
+
+    private Register applyOperation(Register r1, Register r2, Key op) {
+        return addition(r1, r2);
+    }
+
+    private Register addition(Register r1, Register r2) {
+
+        Register firstOperand = new Register(r1.getRegisterCapacity());
+        r1.copyTo(firstOperand);
+        Register secondOperand = new Register(r2.getRegisterCapacity());
+        r2.copyTo(secondOperand);
+        Register result = Register.sum(firstOperand, secondOperand);
+
+        return result;
     }
 }
 
@@ -354,6 +377,32 @@ class Register {
             s += String.valueOf(c);
         }
         return s;
+    }
+
+    public int getRegisterCapacity() {
+        return registerCapacity;
+    }
+
+    public int getSize() {
+        return elementData.size();
+    }
+
+    public static Register sum(Register r1, Register r2) {
+
+        Register result = new Register(r1.getRegisterCapacity());
+        System.out.println("here0");
+        if (r1.isBlank() && r2.isBlank()) {
+            System.out.println("here1");
+            return result;
+        } else if (r1.isBlank() && !r2.isBlank()) {
+            System.out.println("here2");
+            r2.copyTo(result);
+        } else if (!r1.isBlank() && r2.isBlank()) {
+            System.out.println("here3");
+            r1.copyTo(result);
+        }
+
+        return result;
     }
 }
 

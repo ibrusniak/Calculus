@@ -17,6 +17,7 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
+
         Logger logger = Logger.getAnonymousLogger();
         logger.setLevel(Level.ALL);
 
@@ -65,6 +66,7 @@ public class Test {
     }
 
     public static HashMap<Integer, Calculator.Key> getKeysMapping() {
+        
         HashMap<Integer, Calculator.Key> mapping = new HashMap<>();
 
         Calculator.Key[] digitKeys = new Calculator.Key[] {
@@ -110,7 +112,9 @@ public class Test {
 }
 
 class Calculator {
+
     public static enum Key {
+
         ZERO, ONE, TWO, THREE,
         FOUR, FIVE, SIX, SEVEN,
         EIGHT, NINE,
@@ -127,6 +131,7 @@ class Calculator {
         = new HashMap<>();
 
     static {
+
         Key[] arr = Key.values();
         for (int i = 0; i <= 9; i++) {
             digitKeys.add(arr[i]);
@@ -153,16 +158,19 @@ class Calculator {
     private boolean showResult = false;
 
     public Calculator() {
+
         screen = new Register(12);
         registerX = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
+
         screen = new Register(screenCapacity);
         registerX = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
+
         if (key == null) {
             return;
         }
@@ -198,6 +206,7 @@ class Calculator {
 
     @Override
     public String toString() {
+
         return
             "Operation: " + operation
             + "\n\nRegister X: " + registerX
@@ -205,17 +214,20 @@ class Calculator {
     }
 
     private void clearAll() {
+
         screen.reset();
         registerX.reset();
         showResult = false;
     }
 
     private void equalsPressed() {
+
         Register result = applyOperation(registerX, screen, operation);
         result.copyTo(screen);
     }
 
     private void digitKeyPressed(Key key) {
+
         if (operation != null && !registerX.isBlank() && showResult) {
             screen.reset();
             showResult = false;
@@ -224,28 +236,40 @@ class Calculator {
     }
 
     private void operationKeyPresse(Key key) {
+
         operation = key;
         showResult = true;
         screen.copyTo(registerX);
     }
 
     private Register applyOperation(Register r1, Register r2, Key op) {
-        return addition(r1, r2);
-    }
 
-    private Register addition(Register r1, Register r2) {
-        Register firstOperand = new Register(r1.getRegisterCapacity());
-        r1.copyTo(firstOperand);
-        Register secondOperand = new Register(r2.getRegisterCapacity());
-        r2.copyTo(secondOperand);
-        Register result = Register.sum(firstOperand, secondOperand);
+        Register result = new Register(r1.getRegisterCapacity());
+
+        switch (op) {
+            case ADDITION:
+                result =  Register.sum(r1, r2);
+                break;
+            case SUBSTRATION:
+                result =  Register.sub(r1, r2);
+                break;
+            case MULTIPLICATION:
+                result =  Register.mul(r1, r2);
+                break;
+            case DIVISION:
+                result =  Register.div(r1, r2);
+                break;
+        }
+
         return result;
     }
 }
 
-class Register {
+class Register implements Comparable {
+    
     private ArrayDeque<Character> elementData;
     private boolean negative = false;
+    private boolean dotPresent = false;
     private int registerCapacity;
 
     private List<Character> allowedCharacters = Arrays.asList(new Character[] {
@@ -253,36 +277,44 @@ class Register {
     });
 
     public Register() {
+
         registerCapacity = 12;
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
     }
 
     public Register(int capacity) {
+
         registerCapacity = capacity < 2 ? 12 : capacity;
         elementData = new ArrayDeque<>(registerCapacity);
         reset();
     }
 
     public void reset() {
+
         elementData.clear();
-        elementData.addLast('0');
+        elementData.add('0');
         negative = false;
     }
 
     public void backSpace() {
+
         if (elementData.size() == 1) {
             elementData.clear();
-            elementData.addLast('0');
+            elementData.add('0');
             return;
         }
         elementData.removeLast();
         if (elementData.getLast() == '.') {
             elementData.removeLast();
         }
+        if (!elementData.contains('.')) {
+            dotPresent = false;
+        }
     }
 
     public void addDigit(Character ch) {
+
         if (!allowedCharacters.contains(ch) || elementData.size() == registerCapacity) {
             return;
         }
@@ -292,19 +324,22 @@ class Register {
                 case '0':
                     return;
                 case '.':
-                    elementData.addLast(ch);
+                    elementData.add(ch);
                     return;
                 default:
                     elementData.clear();
-                    elementData.addLast(ch);
+                    elementData.add(ch);
                     return;
             }
         } else {
-
+            
             if (ch.equals('.') & elementData.contains('.')) {
                 return;
             }
-            elementData.addLast(ch);
+            elementData.add(ch);
+        }
+        if (elementData.contains('.')) {
+            dotPresent = true;
         }
     }
 
@@ -313,6 +348,7 @@ class Register {
      * @return - boolean
      */
     public boolean isBlank() {
+
         return
             elementData.size() == 1
                 & elementData.getLast() == '0';
@@ -323,6 +359,7 @@ class Register {
     }
 
     public void copyTo(Register target) {
+
         target.reset();
         if (negative) {
             target.setResetNegative();
@@ -334,7 +371,9 @@ class Register {
 
     @Override
     public String toString() {
-        String s = "";
+
+        String s = "Neg: " + (negative ? "y" : "n")
+            + "; Dot: " + (dotPresent ? "y" : "n") + "; Val: ";
         for (Character c : elementData) {
             s += String.valueOf(c);
         }
@@ -350,15 +389,106 @@ class Register {
     }
 
     public static Register sum(Register r1, Register r2) {
+
         Register result = new Register(r1.getRegisterCapacity());
-        if (r1.isBlank() && r2.isBlank()) {
-            return result;
-        } else if (r1.isBlank() && !r2.isBlank()) {
-            r2.copyTo(result);
-        } else if (!r1.isBlank() && r2.isBlank()) {
-            r1.copyTo(result);
+        double r = r1.toDouble() + r2.toDouble();
+        String strRep = Double.valueOf(r).toString();
+        if ((r - (int)r) == 0) {
+            strRep = strRep.substring(0, strRep.indexOf("."));
+        }
+        char[] charArray = strRep.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
+        }
+        if (r < 0) {
+            result.setResetNegative();
         }
         return result;
+    }
+
+    public static Register sub(Register r1, Register r2) {
+
+        Register result = new Register(r1.getRegisterCapacity());
+        double r = r1.toDouble() - r2.toDouble();
+        String strRep = Double.valueOf(r).toString();
+        if ((r - (int)r) == 0) {
+            strRep = strRep.substring(0, strRep.indexOf("."));
+        }
+        char[] charArray = strRep.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
+        }
+        if (r < 0) {
+            result.setResetNegative();
+        }
+        return result;
+    }
+
+    public static Register mul(Register r1, Register r2) {
+
+        Register result = new Register(r1.getRegisterCapacity());
+        double r = r1.toDouble() * r2.toDouble();
+        String strRep = Double.valueOf(r).toString();
+        if ((r - (int)r) == 0) {
+            strRep = strRep.substring(0, strRep.indexOf("."));
+        }
+        char[] charArray = strRep.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
+        }
+        if (r < 0) {
+            result.setResetNegative();
+        }
+        return result;
+    }
+
+    public static Register div(Register r1, Register r2) {
+
+        Register result = new Register(r1.getRegisterCapacity());
+        double r = r1.toDouble() / r2.toDouble();
+        String strRep = Double.valueOf(r).toString();
+        if ((r - (int)r) == 0) {
+            strRep = strRep.substring(0, strRep.indexOf("."));
+        }
+        char[] charArray = strRep.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
+        }
+        if (r < 0) {
+            result.setResetNegative();
+        }
+        return result;
+    }
+
+    public boolean isDotPresent() {
+        return dotPresent;
+    }
+
+    public boolean isNegative() {
+        return negative;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+
+        if (o.getClass() != Register.class) {
+            throw new ClassCastException();
+        }
+        return Double.compare(toDouble(),
+            ((Register)o).toDouble());
+    }
+
+    private double toDouble() {
+
+        String s = "";
+        for (Character c : elementData) {
+            s += String.valueOf(c);
+        }
+        double d = Double.parseDouble(s);
+        if (isNegative()) {
+            d *= -1;
+        }
+        return d;
     }
 }
 

@@ -1,5 +1,7 @@
 
 import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
@@ -33,6 +35,8 @@ public class Test {
         applicationWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JTextArea calculatorToString = new JTextArea();
+        calculatorToString.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
+        calculatorToString.setForeground(Color.BLUE);
         calculatorToString.setEditable(false);
         applicationWindow.add(calculatorToString);
         calculatorToString.setText(calculator.toString());
@@ -184,25 +188,18 @@ class Calculator {
             operationKeyPresse(key);
         } else {
 
-            switch (key) {
-                case OFF:
-                    System.exit(0);
-                    break;
-                case CLEAR_ALL:
-                    clearAll();
-                    break;
-                case NEGATIVE_NUMBER:
-                    screen.setResetNegative();
-                    break;
-                case DECIMAL_DOT:
-                    screen.addDigit('.');
-                    break;
-                case EQUALS:
-                    equalsPressed();
-                    break;
-                case BACKSPACE:
-                    screen.backSpace();
-                    break;
+            if (key == Key.OFF) {
+                System.exit(0);
+            } else if (key == Key.CLEAR_ALL) {
+                clearAll();
+            } else if (key == Key.NEGATIVE_NUMBER) {
+                screen.setResetNegative();
+            } else if (key == Key.DECIMAL_DOT) {
+                screen.addDigit('.');
+            } else if (key == Key.EQUALS) {
+                equalsPressed();
+            } else if (key == Key.BACKSPACE) {
+                screen.backSpace();
             }
         }
     }
@@ -268,13 +265,15 @@ class Calculator {
             case DIVISION:
                 result =  Register.div(r1, r2);
                 break;
+            default:
+                break;
         }
 
         return result;
     }
 }
 
-class Register implements Comparable {
+class Register implements Comparable<Register> {
     
     private ArrayDeque<Character> elementData;
     private boolean negative = false;
@@ -480,13 +479,9 @@ class Register implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-
-        if (o.getClass() != Register.class) {
-            throw new ClassCastException();
-        }
+    public int compareTo(Register another) {
         return Double.compare(toDouble(),
-            ((Register)o).toDouble());
+            another.toDouble());
     }
 
     private double toDouble() {

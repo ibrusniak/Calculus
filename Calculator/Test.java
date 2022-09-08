@@ -154,6 +154,7 @@ class Calculator {
 
     private Register screen;
     private Register registerX;
+    private Register registerY;
     private Key operation;
     private boolean showResult = false;
 
@@ -161,12 +162,14 @@ class Calculator {
 
         screen = new Register(12);
         registerX = new Register(12);
+        registerY = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
 
         screen = new Register(screenCapacity);
         registerX = new Register(screenCapacity);
+        registerY = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
@@ -208,22 +211,28 @@ class Calculator {
     public String toString() {
 
         return
-            "Operation: " + operation
-            + "\n\nRegister X: " + registerX
-                    + "\n\nScreen: " + screen;
+            String.format("Op %s\nRX %s\nRY %s\nS  %s",
+                operation, registerX, registerY, screen);
     }
 
     private void clearAll() {
 
         screen.reset();
         registerX.reset();
+        registerY.reset();
+        operation = null;
         showResult = false;
     }
 
     private void equalsPressed() {
 
-        Register result = applyOperation(registerX, screen, operation);
+        if (!showResult) {
+            screen.copyTo(registerY);
+            showResult = true;
+        }
+        Register result = applyOperation(registerX, registerY, operation);
         result.copyTo(screen);
+        result.copyTo(registerX);
     }
 
     private void digitKeyPressed(Key key) {
@@ -372,10 +381,12 @@ class Register implements Comparable {
     @Override
     public String toString() {
 
-        String s = "Neg: " + (negative ? "y" : "n")
-            + "; Dot: " + (dotPresent ? "y" : "n") + "; Val: ";
+        String s = "";
         for (Character c : elementData) {
             s += String.valueOf(c);
+        }
+        if (negative) {
+            s = "-" + s;
         }
         return s;
     }

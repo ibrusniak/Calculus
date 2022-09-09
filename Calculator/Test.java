@@ -236,9 +236,11 @@ class Calculator {
 
         if (operation != null && !registerX.isBlank() && showResult) {
             screen.reset();
+            registerY.reset();
             showResult = false;
         }
         screen.addDigit(KeyCharacterMapping.get(key));
+        registerY.addDigit(KeyCharacterMapping.get(key));
     }
 
     private void operationKeyPresse(Key key) {

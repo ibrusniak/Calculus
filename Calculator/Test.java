@@ -200,6 +200,7 @@ class Calculator {
                 equalsPressed();
             } else if (key == Key.BACKSPACE) {
                 screen.backSpace();
+                registerY.backSpace();
             }
         }
     }

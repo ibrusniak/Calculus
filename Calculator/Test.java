@@ -134,10 +134,10 @@ class Calculator {
     private static HashMap<Key, Character> KeyToCharMapping
         = new HashMap<>();
     
-    private static enum Mode {
+    private static enum State {
 
-        INPUTS_OPERAND,
-        SHOWS_RESULT
+        INPUT,
+        RESULT
     }
 
     static {
@@ -162,24 +162,21 @@ class Calculator {
         KeyToCharMapping.put(Key.NINE, '9');
     }
 
-    private Register screen;
-    private Register rX;
-    private Register rY;
     private Key operation = null;
-    private Mode calculatorMode = Mode.INPUTS_OPERAND;
+    private Register screen;
+    private Register additionalRegister;
+    private State state = State.INPUT;
 
     public Calculator() {
 
+        additionalRegister = new Register(12);
         screen = new Register(12);
-        rX = new Register(12);
-        rY = new Register(12);
     }
 
     public Calculator(int screenCapacity) {
 
+        additionalRegister = new Register(screenCapacity);
         screen = new Register(screenCapacity);
-        rX = new Register(screenCapacity);
-        rY = new Register(screenCapacity);
     }
 
     public void keyPressed(Key key) {
@@ -197,7 +194,7 @@ class Calculator {
             if (key == Key.OFF) {
                 System.exit(0);
             } else if (key == Key.CLEAR_ALL) {
-                clearAll();
+                reset();
             } else if (key == Key.NEGATIVE_NUMBER) {
                 screen.setResetNegative();
             } else if (key == Key.DECIMAL_DOT) {
@@ -214,67 +211,70 @@ class Calculator {
     public String toString() {
 
         return
-            String.format(" Op %s\n Mod %s\n RX %s\n RY %s\n\n   S  %s",
-                operation, calculatorMode, rX, rY, screen);
+            String.format(" Operation: %s\n state: %s\n first operand: %s\n second operand: %s\n",
+                operation, state, additionalRegister, screen);
     }
 
-    private void clearAll() {
+    private void reset() {
 
-        screen.reset();
-        rX.reset();
-        rY.reset();
         operation = null;
-        calculatorMode = Mode.INPUTS_OPERAND;
+        additionalRegister.reset();
+        screen.reset();
+        state = State.INPUT;
     }
 
     private void digitKeyPressed(Key key) {
-
-        if (calculatorMode == Mode.SHOWS_RESULT) {
+        
+        if (state == State.RESULT) {
             screen.reset();
-            calculatorMode = Mode.INPUTS_OPERAND;
+            state = State.INPUT;
         }
         screen.addDigit(KeyToCharMapping.get(key));
     }
 
     private void operationKeyPresse(Key key) {
 
-        if (calculatorMode == Mode.INPUTS_OPERAND) {
-            screen.copyTo(rX);
-            calculatorMode = Mode.SHOWS_RESULT;
+        if (state == State.INPUT) {
+            if (operation == null) {
+                screen.copyTo(additionalRegister);
+            } else {
+                applyOperation(operation, additionalRegister, screen).copyTo(screen);
+                screen.copyTo(additionalRegister);
+            }
         } else {
-            screen.copyTo(rY);
+            screen.copyTo(additionalRegister);
         }
         operation = key;
+        state = State.RESULT;
     }
-
+    
     private void equalsPressed() {
 
-        if (calculatorMode == Mode.INPUTS_OPERAND)
-            screen.copyTo(rY);
-        if (rY.isBlank())
-            screen.copyTo(rY);
-        if (operation != null)
-            applyOperation(rX, rY).copyTo(screen);
-        screen.copyTo(rX);
-        calculatorMode = Mode.SHOWS_RESULT;
+        if (operation != null && state != State.RESULT) {
+
+            applyOperation(operation, additionalRegister, screen).copyTo(screen);
+            if (additionalRegister.isBlank())
+                screen.copyTo(additionalRegister);
+            state = State.RESULT;
+        }
     }
 
-    private Register applyOperation(Register r1, Register r2) {
+    private Register applyOperation(Key operation, Register r1, Register r2) {
 
-        Register result = new Register(rX.getRegisterCapacity());
+        Register result = new Register(r1.getRegisterCapacity());
 
         switch (operation) {
             case ADDITION:
-                result =  Register.sum(r1, r2);
+                Register.sum(r1, r2).copyTo(result);
                 break;
             case SUBSTRATION:
-                result =  Register.sub(r1, r2);
+                Register.sub(r1, r2).copyTo(result);
                 break;
             case MULTIPLICATION:
-                result =  Register.mul(r1, r2);
+                Register.mul(r1, r2).copyTo(result);
                 break;
             case DIVISION:
-                result =  Register.div(r1, r2);
+                Register.div(r1, r2).copyTo(result);
                 break;
             default:
                 break;

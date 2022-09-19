@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.text.html.HTMLDocument.RunElement;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -188,7 +189,7 @@ class Calculator {
         if (digitKeys.contains(key)) {
             digitKeyPressed(key);
         } else if (operationKeys.contains(key)) {
-            operationKeyPresse(key);
+            operationKeyPressed(key);
         } else {
 
             if (key == Key.OFF) {
@@ -211,7 +212,7 @@ class Calculator {
     public String toString() {
 
         return
-            String.format(" Operation: %s\n state: %s\n first operand: %s\n second operand: %s\n",
+            String.format(" Operation: %s\n state: %s\n additional register: %s\n screen: %s\n",
                 operation, state, additionalRegister, screen);
     }
 
@@ -232,13 +233,13 @@ class Calculator {
         screen.addDigit(KeyToCharMapping.get(key));
     }
 
-    private void operationKeyPresse(Key key) {
+    private void operationKeyPressed(Key key) {
 
         if (state == State.INPUT) {
             if (operation == null) {
                 screen.copyTo(additionalRegister);
             } else {
-                applyOperation(operation, additionalRegister, screen).copyTo(screen);
+                applyOperation();
                 screen.copyTo(additionalRegister);
             }
         } else {
@@ -249,38 +250,32 @@ class Calculator {
     }
     
     private void equalsPressed() {
-
+        
         if (operation != null && state != State.RESULT) {
-
-            applyOperation(operation, additionalRegister, screen).copyTo(screen);
-            if (additionalRegister.isBlank())
-                screen.copyTo(additionalRegister);
+            applyOperation();
             state = State.RESULT;
         }
     }
 
-    private Register applyOperation(Key operation, Register r1, Register r2) {
-
-        Register result = new Register(r1.getRegisterCapacity());
+    private void applyOperation() {
 
         switch (operation) {
+
             case ADDITION:
-                Register.sum(r1, r2).copyTo(result);
+                additionalRegister.add(screen).copyTo(screen);
                 break;
-            case SUBSTRATION:
-                Register.sub(r1, r2).copyTo(result);
+                case SUBSTRATION:
+                additionalRegister.minus(screen).copyTo(screen);
                 break;
-            case MULTIPLICATION:
-                Register.mul(r1, r2).copyTo(result);
+                case MULTIPLICATION:
+                additionalRegister.multiply(screen).copyTo(screen);
                 break;
-            case DIVISION:
-                Register.div(r1, r2).copyTo(result);
+                case DIVISION:
+                additionalRegister.divide(screen).copyTo(screen);
                 break;
             default:
                 break;
         }
-
-        return result;
     }
 }
 
@@ -409,10 +404,28 @@ class Register implements Comparable<Register> {
         return elementData.size();
     }
 
-    public static Register sum(Register r1, Register r2) {
+    public Register add(Register to) {
 
-        Register result = new Register(r1.getRegisterCapacity());
-        double r = r1.toDouble() + r2.toDouble();
+        Register result = new Register(getRegisterCapacity());
+        double r = toDouble() + to.toDouble();
+        String strRep = Double.valueOf(r).toString();
+        if ((r - (int)r) == 0) {
+            strRep = strRep.substring(0, strRep.indexOf("."));
+        }
+        char[] charArray = strRep.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
+        }
+        if (r < 0) {
+            result.setResetNegative();
+        }
+        return result;
+    }
+    
+    public Register minus(Register what) {
+
+        Register result = new Register(getRegisterCapacity());
+        double r = toDouble() - what.toDouble();
         String strRep = Double.valueOf(r).toString();
         if ((r - (int)r) == 0) {
             strRep = strRep.substring(0, strRep.indexOf("."));
@@ -427,10 +440,10 @@ class Register implements Comparable<Register> {
         return result;
     }
 
-    public static Register sub(Register r1, Register r2) {
+    public Register multiply(Register by) {
 
-        Register result = new Register(r1.getRegisterCapacity());
-        double r = r1.toDouble() - r2.toDouble();
+        Register result = new Register(getRegisterCapacity());
+        double r = toDouble() * by.toDouble();
         String strRep = Double.valueOf(r).toString();
         if ((r - (int)r) == 0) {
             strRep = strRep.substring(0, strRep.indexOf("."));
@@ -445,28 +458,10 @@ class Register implements Comparable<Register> {
         return result;
     }
 
-    public static Register mul(Register r1, Register r2) {
+    public Register divide(Register by) {
 
-        Register result = new Register(r1.getRegisterCapacity());
-        double r = r1.toDouble() * r2.toDouble();
-        String strRep = Double.valueOf(r).toString();
-        if ((r - (int)r) == 0) {
-            strRep = strRep.substring(0, strRep.indexOf("."));
-        }
-        char[] charArray = strRep.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            result.addDigit(Character.valueOf(charArray[i]));
-        }
-        if (r < 0) {
-            result.setResetNegative();
-        }
-        return result;
-    }
-
-    public static Register div(Register r1, Register r2) {
-
-        Register result = new Register(r1.getRegisterCapacity());
-        double r = r1.toDouble() / r2.toDouble();
+        Register result = new Register(getRegisterCapacity());
+        double r = toDouble() / by.toDouble();
         String strRep = Double.valueOf(r).toString();
         if ((r - (int)r) == 0) {
             strRep = strRep.substring(0, strRep.indexOf("."));
@@ -506,6 +501,51 @@ class Register implements Comparable<Register> {
             d *= -1;
         }
         return d;
+    }
+}
+
+class Arithmetics {
+
+    public static Register addition(Register r1, Register r2) {
+
+        int resultCapacity = Integer.max(r1.getRegisterCapacity(), r2.getRegisterCapacity());
+        Register result = new Register(resultCapacity);
+
+        if (r1.isBlank() || r2.isBlank()) {
+            (r1.isBlank() ? r2 : r1).copyTo(result);
+        } else {
+
+            if (lessThenEmpty(r1) && lessThenEmpty(r2)) {
+
+            } else if (lessThenEmpty(r1) && !lessThenEmpty(r2)) {
+
+            } else if (!lessThenEmpty(r1) && lessThenEmpty(r2)) {
+
+            }
+        }
+
+        return result;
+    }
+
+    public static Register substration(Register r1, Register r2) {
+
+        int resultCapacity = Integer.max(r1.getRegisterCapacity(), r2.getRegisterCapacity());
+        Register result = new Register(resultCapacity);
+
+        if (r1.isBlank() || r2.isBlank()) {
+            (r1.isBlank() ? r2 : r1).copyTo(result);
+        }
+
+        return result;
+    }
+
+    private static Register emptyRegister() {
+        return new Register();
+    }
+
+    private static boolean lessThenEmpty(Register r) {
+        return
+            r.compareTo(emptyRegister()) == -1;
     }
 }
 

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
-import javax.swing.text.html.HTMLDocument.RunElement;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -309,6 +308,7 @@ class Register implements Comparable<Register> {
         elementData.clear();
         elementData.add('0');
         negative = false;
+        dotPresent = false;
     }
 
     public void backSpace() {
@@ -318,7 +318,9 @@ class Register implements Comparable<Register> {
             elementData.add('0');
             return;
         }
+
         elementData.removeLast();
+
         if (elementData.getLast() == '.') {
             elementData.removeLast();
         }
@@ -365,7 +367,7 @@ class Register implements Comparable<Register> {
 
         return
             elementData.size() == 1
-                & elementData.getLast() == '0';
+                && elementData.getLast() == '0';
     }
 
     public void setResetNegative() {
@@ -375,25 +377,13 @@ class Register implements Comparable<Register> {
     public void copyTo(Register target) {
 
         target.reset();
+
         if (negative) {
             target.setResetNegative();
         }
         for (Character ch : elementData) {
             target.addDigit(ch);
         }
-    }
-
-    @Override
-    public String toString() {
-
-        String s = "";
-        for (Character c : elementData) {
-            s += String.valueOf(c);
-        }
-        if (negative) {
-            s = "-" + s;
-        }
-        return s;
     }
 
     public int getRegisterCapacity() {
@@ -482,6 +472,19 @@ class Register implements Comparable<Register> {
 
     public boolean isNegative() {
         return negative;
+    }
+
+    @Override
+    public String toString() {
+
+        String s = "";
+        for (Character c : elementData) {
+            s += String.valueOf(c);
+        }
+        if (negative) {
+            s = "-" + s;
+        }
+        return s;
     }
 
     @Override

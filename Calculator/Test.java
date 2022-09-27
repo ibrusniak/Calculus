@@ -21,7 +21,7 @@ public class Test {
     public static void main(String[] args) {
 
         Logger logger = Logger.getAnonymousLogger();
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.OFF);
 
         logger.info("Started...");
 
@@ -137,7 +137,8 @@ class Calculator {
     private static enum State {
 
         INPUT,
-        RESULT
+        RESULT,
+        ERROR
     }
 
     static {
@@ -395,75 +396,19 @@ class Register implements Comparable<Register> {
     }
 
     public Register add(Register to) {
-
-        Register result = new Register(getRegisterCapacity());
-        double r = toDouble() + to.toDouble();
-        String strRep = Double.valueOf(r).toString();
-        if ((r - (int)r) == 0) {
-            strRep = strRep.substring(0, strRep.indexOf("."));
-        }
-        char[] charArray = strRep.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            result.addDigit(Character.valueOf(charArray[i]));
-        }
-        if (r < 0) {
-            result.setResetNegative();
-        }
-        return result;
+        return doubleToRegister(toDouble() + to.toDouble());
     }
     
     public Register minus(Register what) {
-
-        Register result = new Register(getRegisterCapacity());
-        double r = toDouble() - what.toDouble();
-        String strRep = Double.valueOf(r).toString();
-        if ((r - (int)r) == 0) {
-            strRep = strRep.substring(0, strRep.indexOf("."));
-        }
-        char[] charArray = strRep.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            result.addDigit(Character.valueOf(charArray[i]));
-        }
-        if (r < 0) {
-            result.setResetNegative();
-        }
-        return result;
+        return doubleToRegister(toDouble() - what.toDouble());
     }
 
     public Register multiply(Register by) {
-
-        Register result = new Register(getRegisterCapacity());
-        double r = toDouble() * by.toDouble();
-        String strRep = Double.valueOf(r).toString();
-        if ((r - (int)r) == 0) {
-            strRep = strRep.substring(0, strRep.indexOf("."));
-        }
-        char[] charArray = strRep.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            result.addDigit(Character.valueOf(charArray[i]));
-        }
-        if (r < 0) {
-            result.setResetNegative();
-        }
-        return result;
+        return doubleToRegister(toDouble() * by.toDouble());
     }
 
     public Register divide(Register by) {
-
-        Register result = new Register(getRegisterCapacity());
-        double r = toDouble() / by.toDouble();
-        String strRep = Double.valueOf(r).toString();
-        if ((r - (int)r) == 0) {
-            strRep = strRep.substring(0, strRep.indexOf("."));
-        }
-        char[] charArray = strRep.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            result.addDigit(Character.valueOf(charArray[i]));
-        }
-        if (r < 0) {
-            result.setResetNegative();
-        }
-        return result;
+        return doubleToRegister(toDouble() / by.toDouble());
     }
 
     public boolean isDotPresent() {
@@ -505,50 +450,25 @@ class Register implements Comparable<Register> {
         }
         return d;
     }
-}
 
-class Arithmetics {
+    private Register doubleToRegister(double d) {
 
-    public static Register addition(Register r1, Register r2) {
-
-        int resultCapacity = Integer.max(r1.getRegisterCapacity(), r2.getRegisterCapacity());
-        Register result = new Register(resultCapacity);
-
-        if (r1.isBlank() || r2.isBlank()) {
-            (r1.isBlank() ? r2 : r1).copyTo(result);
-        } else {
-
-            if (lessThenEmpty(r1) && lessThenEmpty(r2)) {
-
-            } else if (lessThenEmpty(r1) && !lessThenEmpty(r2)) {
-
-            } else if (!lessThenEmpty(r1) && lessThenEmpty(r2)) {
-
-            }
+        Register result = new Register(getRegisterCapacity());
+        String s = Double.valueOf(d).toString();
+        
+        if ((d - (int)d) == 0) {
+            s = s.substring(0, s.indexOf("."));
         }
 
-        return result;
-    }
+        char[] charArray = s.toCharArray();
 
-    public static Register substration(Register r1, Register r2) {
-
-        int resultCapacity = Integer.max(r1.getRegisterCapacity(), r2.getRegisterCapacity());
-        Register result = new Register(resultCapacity);
-
-        if (r1.isBlank() || r2.isBlank()) {
-            (r1.isBlank() ? r2 : r1).copyTo(result);
+        for (int i = 0; i < charArray.length; i++) {
+            result.addDigit(Character.valueOf(charArray[i]));
         }
-
+        if (d < 0) {
+            result.setResetNegative();
+        }
         return result;
-    }
-
-    private static Register emptyRegister() {
-        return new Register();
-    }
-
-    private static boolean lessThenEmpty(Register r) {
-        return
-            r.compareTo(emptyRegister()) == -1;
     }
 }
 

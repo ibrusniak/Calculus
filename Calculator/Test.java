@@ -453,14 +453,15 @@ class Register implements Comparable<Register> {
 
     private Register doubleToRegister(double d) {
 
-        Register result = new Register(getRegisterCapacity());
-        String s = Double.valueOf(d).toString();
-        
+        String s = doubleToPlainString(d);
+
         if ((d - (int)d) == 0) {
             s = s.substring(0, s.indexOf("."));
         }
 
         char[] charArray = s.toCharArray();
+
+        Register result = new Register(getRegisterCapacity());
 
         for (int i = 0; i < charArray.length; i++) {
             result.addDigit(Character.valueOf(charArray[i]));
@@ -468,7 +469,23 @@ class Register implements Comparable<Register> {
         if (d < 0) {
             result.setResetNegative();
         }
+
         return result;
     }
-}
 
+    private String doubleToPlainString(double d) {
+
+        String format
+            = "%0" + getRegisterCapacity() * 2
+                + "." + getRegisterCapacity() + "f";
+
+        String formatted = String.format(format, d);
+
+        System.out.printf("{%s}{%s}{%s}%n",
+            d, format, formatted);
+
+
+
+        return formatted;
+    }
+}

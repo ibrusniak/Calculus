@@ -1,14 +1,4 @@
 
-import java.awt.event.*;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-
-import java.util.logging.Logger;
-import java.util.logging.Level;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -20,98 +10,16 @@ public class Test {
 
     public static void main(String[] args) {
 
-        // Logger logger = Logger.getAnonymousLogger();
-        // logger.setLevel(Level.OFF);
+        BigRegister b0 = new BigRegister();
 
-        // logger.info("Started...");
+        b0.push(2).push(3).push(5);
 
-        // Calculator calculator = new Calculator();
-
-        // HashMap<Integer, Calculator.Key> keyMapping = getKeysMapping();
-
-        // JFrame applicationWindow = new JFrame("Calculator class tester (ESC - to exit)");
-
-        // applicationWindow.setSize(640, 200);
-        // applicationWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // JTextArea calculatorToString = new JTextArea();
-        // calculatorToString.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
-        // calculatorToString.setForeground(Color.BLUE);
-        // calculatorToString.setEditable(false);
-        // applicationWindow.add(calculatorToString);
-        // calculatorToString.setText(calculator.toString());
-
-        // calculatorToString.addKeyListener(new KeyListener() {
-        //     @Override
-        //     public void keyTyped(KeyEvent e) {}
-
-        //     @Override
-        //     public void keyPressed(KeyEvent e) {
-
-        //         int keyKode = e.getKeyCode();
-
-        //         logger.info(String.format("Pressed: code: %s, Key: %s",
-        //                 keyKode, keyMapping.get(keyKode)));
-
-        //         if (keyKode == 27) {
-        //             logger.info("Exiting...");
-        //             System.exit(0);
-        //         }
-
-        //         calculator.keyPressed(keyMapping.get(keyKode));
-        //         calculatorToString.setText(calculator.toString());
-        //     }
-
-        //     @Override
-        //     public void keyReleased(KeyEvent e) {}
-        // });
-
-        // applicationWindow.setVisible(true);
-    }
-
-    public static HashMap<Integer, Calculator.Key> getKeysMapping() {
+        List<Integer> d = Arrays.asList(new Integer[] {2, 5, 6, 2, 4, 6, 7});
+        d.forEach(x -> b0.push(x));
         
-        HashMap<Integer, Calculator.Key> mapping = new HashMap<>();
-
-        Calculator.Key[] digitKeys = new Calculator.Key[] {
-            Calculator.Key.ZERO, 
-            Calculator.Key.ONE, 
-            Calculator.Key.TWO, 
-            Calculator.Key.THREE, 
-            Calculator.Key.FOUR, 
-            Calculator.Key.FIVE, 
-            Calculator.Key.SIX, 
-            Calculator.Key.SEVEN, 
-            Calculator.Key.EIGHT, 
-            Calculator.Key.NINE, 
-        };
-
-        /*
-         * NumPad: 0-9, codes: 96-105
-         * Standard keyboard: 0-9, codes: 48-57
-         */
-        for (int i = 48, j = 96, index = 0; i <= 57; i++, j++, index++) {
-            mapping.put(i, digitKeys[index]);
-            mapping.put(j, digitKeys[index]);
-        }
-
-        mapping.putAll(Map.<Integer, Calculator.Key>of(
-                107, Calculator.Key.ADDITION,
-                109, Calculator.Key.SUBSTRATION,
-                106, Calculator.Key.MULTIPLICATION,
-                111, Calculator.Key.DIVISION));
-
-        mapping.putAll(Map.<Integer, Calculator.Key>of(
-                110, Calculator.Key.DECIMAL_DOT,
-                10, Calculator.Key.EQUALS,
-                78, Calculator.Key.NEGATIVE_NUMBER,
-                79, Calculator.Key.OFF,
-                67, Calculator.Key.CLEAR_ALL));
-
-        mapping.put(27, Calculator.Key.OFF);
-        mapping.put(8, Calculator.Key.BACKSPACE);
-
-        return mapping;
+        System.out.println(b0);
+        b0.removeRedundandZeroes();
+        System.out.println(b0);
     }
 }
 
@@ -503,41 +411,59 @@ class Register implements Comparable<Register> {
 
 class BigRegister implements Comparable<BigRegister> {
 
-    private ArrayDeque<Integer> wholeNumberPart = new ArrayDeque<>();
-    private ArrayDeque<Integer> decimalPart = new ArrayDeque<>();
+    private ArrayDeque<Byte> wholeNumberPart = new ArrayDeque<>();
+    private ArrayDeque<Byte> decimalPart = new ArrayDeque<>();
     private boolean positive = true;
+    private boolean integer = true;
+
+    public BigRegister push(int digit) {
+
+        if (digit < 0 || digit > 9)
+            throw new Error(String.format("Invalid argument '%d' for 'pushDigit' function", digit));
+        
+        (integer ? wholeNumberPart : decimalPart).addLast((byte)digit);
+
+        return this;
+    }
+
+    public void setResetIntegerFlag() {
+        integer = !integer;
+    }
 
     public void reset() {
 
         wholeNumberPart.clear();
         decimalPart.clear();
         positive = true;
+        integer = true;
     }
 
     @Override
     public String toString() {
 
-        String res = "";
+        String res = "0";
+
+        if (isEmpty()) return res;
+
+        if (!wholeNumberPartIsEmpty()) {
+            res = "";
+            String[] tmp = new String[]{res};
+            wholeNumberPart.forEach(x -> tmp[0] += String.valueOf(x));
+            res = tmp[0];
+        }
+
+        if (!decimalPartIsEmpty()) {
+            res += ".";
+            String[] tmp = new String[]{res};
+            decimalPart.forEach(x -> tmp[0] += String.valueOf(x));
+            res = tmp[0];
+        }
 
         return res;
     }
 
-    /**
-     * Checks if this instance is empty.
-     * Empty register contains onli zeroes in the whole number part or the number part is empty. And also contains only
-     * zeroes in the decimal part or decimal part is empty.
-     * Examples:
-     *  0000000.0000000
-     *  null.null
-     *  00000.null
-     *  null.000000
-     *  ...
-     */
     public boolean isEmpty() {
-        
-        return
-            ((wholeNumberPart.size() == 0) || wholeNumberPart.stream().allMatch(x -> x == 0))
-                && ((decimalPart.size() == 0) || decimalPart.stream().allMatch(x -> x == 0));
+        return wholeNumberPartIsEmpty() && decimalPartIsEmpty();
     }
 
     public int compareTo(BigRegister r) {
@@ -546,8 +472,26 @@ class BigRegister implements Comparable<BigRegister> {
         if (!isEmpty() && r.isEmpty()) return 1;
         if (isEmpty() && !r.isEmpty()) return -1;
 
-        // TODO: code here the case when bos are not empty!
+        // TODO: code here the case when both are not empty!
         return 0;
+    }
+
+    public void removeRedundandZeroes() {
+
+        byte tmp = 0;
+        while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
+            wholeNumberPart.removeFirst();
+        
+        while (!decimalPartIsEmpty() && (tmp = decimalPart.getLast()) == 0)
+            decimalPart.removeLast();
+    }
+
+    private boolean wholeNumberPartIsEmpty() {
+        return wholeNumberPart.size() == 0 || wholeNumberPart.stream().allMatch(x -> x == 0);
+    }
+
+    private boolean decimalPartIsEmpty() {
+        return decimalPart.size() == 0 || decimalPart.stream().allMatch(x -> x == 0);
     }
 }
 

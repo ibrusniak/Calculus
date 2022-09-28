@@ -20,53 +20,53 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Logger logger = Logger.getAnonymousLogger();
-        logger.setLevel(Level.OFF);
+        // Logger logger = Logger.getAnonymousLogger();
+        // logger.setLevel(Level.OFF);
 
-        logger.info("Started...");
+        // logger.info("Started...");
 
-        Calculator calculator = new Calculator();
+        // Calculator calculator = new Calculator();
 
-        HashMap<Integer, Calculator.Key> keyMapping = getKeysMapping();
+        // HashMap<Integer, Calculator.Key> keyMapping = getKeysMapping();
 
-        JFrame applicationWindow = new JFrame("Calculator class tester (ESC - to exit)");
+        // JFrame applicationWindow = new JFrame("Calculator class tester (ESC - to exit)");
 
-        applicationWindow.setSize(640, 200);
-        applicationWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // applicationWindow.setSize(640, 200);
+        // applicationWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JTextArea calculatorToString = new JTextArea();
-        calculatorToString.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
-        calculatorToString.setForeground(Color.BLUE);
-        calculatorToString.setEditable(false);
-        applicationWindow.add(calculatorToString);
-        calculatorToString.setText(calculator.toString());
+        // JTextArea calculatorToString = new JTextArea();
+        // calculatorToString.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
+        // calculatorToString.setForeground(Color.BLUE);
+        // calculatorToString.setEditable(false);
+        // applicationWindow.add(calculatorToString);
+        // calculatorToString.setText(calculator.toString());
 
-        calculatorToString.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {}
+        // calculatorToString.addKeyListener(new KeyListener() {
+        //     @Override
+        //     public void keyTyped(KeyEvent e) {}
 
-            @Override
-            public void keyPressed(KeyEvent e) {
+        //     @Override
+        //     public void keyPressed(KeyEvent e) {
 
-                int keyKode = e.getKeyCode();
+        //         int keyKode = e.getKeyCode();
 
-                logger.info(String.format("Pressed: code: %s, Key: %s",
-                        keyKode, keyMapping.get(keyKode)));
+        //         logger.info(String.format("Pressed: code: %s, Key: %s",
+        //                 keyKode, keyMapping.get(keyKode)));
 
-                if (keyKode == 27) {
-                    logger.info("Exiting...");
-                    System.exit(0);
-                }
+        //         if (keyKode == 27) {
+        //             logger.info("Exiting...");
+        //             System.exit(0);
+        //         }
 
-                calculator.keyPressed(keyMapping.get(keyKode));
-                calculatorToString.setText(calculator.toString());
-            }
+        //         calculator.keyPressed(keyMapping.get(keyKode));
+        //         calculatorToString.setText(calculator.toString());
+        //     }
 
-            @Override
-            public void keyReleased(KeyEvent e) {}
-        });
+        //     @Override
+        //     public void keyReleased(KeyEvent e) {}
+        // });
 
-        applicationWindow.setVisible(true);
+        // applicationWindow.setVisible(true);
     }
 
     public static HashMap<Integer, Calculator.Key> getKeysMapping() {
@@ -479,13 +479,76 @@ class Register implements Comparable<Register> {
             = "%0" + getRegisterCapacity() * 2
                 + "." + getRegisterCapacity() + "f";
 
-        String formatted = String.format(format, d);
+        String str = String.format(format, d);
 
         System.out.printf("{%s}{%s}{%s}%n",
-            d, format, formatted);
+            d, format, str);
 
 
 
-        return formatted;
+        return str;
+    }
+
+    // private String removeRedundantZeroes(String s) {
+
+    //     String result = "";
+
+    //     if (s.indexOf('.') != -1) {
+
+    //     } else {
+
+    //     }
+    // }
+}
+
+class BigRegister implements Comparable<BigRegister> {
+
+    private ArrayDeque<Integer> wholeNumberPart = new ArrayDeque<>();
+    private ArrayDeque<Integer> decimalPart = new ArrayDeque<>();
+    private boolean positive = true;
+
+    public void reset() {
+
+        wholeNumberPart.clear();
+        decimalPart.clear();
+        positive = true;
+    }
+
+    @Override
+    public String toString() {
+
+        String res = "";
+
+        return res;
+    }
+
+    /**
+     * Checks if this instance is empty.
+     * Empty register contains onli zeroes in the whole number part or the number part is empty. And also contains only
+     * zeroes in the decimal part or decimal part is empty.
+     * Examples:
+     *  0000000.0000000
+     *  null.null
+     *  00000.null
+     *  null.000000
+     *  ...
+     */
+    public boolean isEmpty() {
+        
+        return
+            ((wholeNumberPart.size() == 0) || wholeNumberPart.stream().allMatch(x -> x == 0))
+                && ((decimalPart.size() == 0) || decimalPart.stream().allMatch(x -> x == 0));
+    }
+
+    public int compareTo(BigRegister r) {
+        
+        if (isEmpty() && r.isEmpty()) return 0;
+        if (!isEmpty() && r.isEmpty()) return 1;
+        if (isEmpty() && !r.isEmpty()) return -1;
+
+        // TODO: code here the case when bos are not empty!
+        return 0;
     }
 }
+
+

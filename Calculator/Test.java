@@ -1,4 +1,5 @@
 
+import java.util.HashMap;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
@@ -7,49 +8,98 @@ public class Test {
 
     public static void main(String[] args) {
 
-        BigRegister b0 = new BigRegister();
-
-        b0.push(2).push(3).push(5);
-
-        List<Integer> d = Arrays.asList(new Integer[] {2, 5, 6, 2, 4, 6, 7});
-        d.forEach(x -> b0.push(x));
-        
-        b0.setResetIntegerFlag();
-        d = Arrays.asList(new Integer[] {0, 0, 0, 2, 5, 6, 2, 4, 6, 7, 0, 0, 0, 0});
-        d.forEach(x -> b0.push(x));
-        System.out.println(b0);
-        b0.removeRedundandZeroes();
-        System.out.println(b0);
+        NE ne = new NE();
+        ne.push(0);
+        ne.push(0);
+        ne.push(0);
+        ne.push(4);
+        ne.setIsInteger(false);
+        ne.push(0);
+        ne.push(0);
+        ne.push(4);
+        System.out.println(ne);        
     }
 }
 
-class BigRegister implements Comparable<BigRegister> {
+/**
+ * NE - number entity - represents number entity with all its digits.
+ */
+class NE implements Comparable<NE> {
 
-    private ArrayDeque<Byte> wholeNumberPart = new ArrayDeque<>();
-    private ArrayDeque<Byte> decimalPart = new ArrayDeque<>();
-    private boolean positive = true;
-    private boolean integer = true;
+    private ArrayDeque<Integer> wholeNumberPart = new ArrayDeque<>();
+    private ArrayDeque<Integer> decimalPart = new ArrayDeque<>();
+    private boolean isPositive = true;
+    private boolean isInteger = true;
 
-    public BigRegister push(int digit) {
+    public NE push(int digit) {
 
         if (digit < 0 || digit > 9)
             throw new Error(String.format("Invalid argument '%d' for 'pushDigit' function", digit));
         
-        (integer ? wholeNumberPart : decimalPart).addLast((byte)digit);
+        (isInteger ? wholeNumberPart : decimalPart).addLast(digit);
 
         return this;
     }
 
-    public void setResetIntegerFlag() {
-        integer = !integer;
+    public NE backSpace() {
+        
+        if (!decimalPartIsEmpty()) {
+            decimalPart.removeLast();
+            if (decimalPartIsEmpty()) setIsInteger(true);
+        } else {
+            wholeNumberPart.removeLast();
+        }
+        
+        return this;
     }
 
-    public void reset() {
+    public NE setIsInteger(boolean newValue) {
+        
+        isInteger = newValue;
+        return this;
+    }
+
+    public boolean isInteger() {
+        return isInteger;
+    }
+
+    public boolean isPositive() {
+        return isPositive;
+    }
+
+    public ArrayDeque<Integer> getWholeNumberPart() {
+        return wholeNumberPart;
+    }
+
+    public ArrayDeque<Integer> getDecimalPart() {
+        return decimalPart;
+    }
+
+    public NE setIsPositive(boolean newValue) {
+
+        isPositive = newValue;
+        return this;
+    }
+
+    public NE reset() {
 
         wholeNumberPart.clear();
         decimalPart.clear();
-        positive = true;
-        integer = true;
+        isPositive = true;
+        isInteger = true;
+        return this;
+    }
+
+    public NE removeRedundandZeroes() {
+
+        byte tmp = 0;
+        while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
+            wholeNumberPart.removeFirst();
+        
+        while (!decimalPartIsEmpty() && (tmp = decimalPart.getLast()) == 0)
+            decimalPart.removeLast();
+
+        return this;
     }
 
     @Override
@@ -57,7 +107,7 @@ class BigRegister implements Comparable<BigRegister> {
 
         String res = "0";
 
-        if (isEmpty()) return res;
+        if (isZero()) return res;
 
         if (!wholeNumberPartIsEmpty()) {
             res = "";
@@ -76,36 +126,67 @@ class BigRegister implements Comparable<BigRegister> {
         return res;
     }
 
-    public boolean isEmpty() {
+    public boolean isZero() {
         return wholeNumberPartIsEmpty() && decimalPartIsEmpty();
     }
 
-    public int compareTo(BigRegister r) {
-        
-        if (isEmpty() && r.isEmpty()) return 0;
-        if (!isEmpty() && r.isEmpty()) return 1;
-        if (isEmpty() && !r.isEmpty()) return -1;
-
-        // TODO: code here the case when both are not empty!
-        return 0;
-    }
-
-    public void removeRedundandZeroes() {
-
-        byte tmp = 0;
-        while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
-            wholeNumberPart.removeFirst();
-        
-        while (!decimalPartIsEmpty() && (tmp = decimalPart.getLast()) == 0)
-            decimalPart.removeLast();
+    public int compareTo(NE another) {
+        return NEOps.compare(this, another);
     }
 
     private boolean wholeNumberPartIsEmpty() {
-        return wholeNumberPart.size() == 0 || wholeNumberPart.stream().allMatch(x -> x == 0);
+        return wholeNumberPart.size() == 0;
     }
 
     private boolean decimalPartIsEmpty() {
-        return decimalPart.size() == 0 || decimalPart.stream().allMatch(x -> x == 0);
+        return decimalPart.size() == 0;
+    }
+
+    private boolean wholeNumberPartContainsOnlyZeroes() {
+        return wholeNumberPart.stream().allMatch(x -> x == 0);
+    }
+
+    private boolean decimalPartContainsOnlyZeroes() {
+        return decimalPart.stream().allMatch(x -> x == 0);
+    }
+}
+
+class NEOps {
+
+    public static int compare(NE f, NE s) {
+
+        if (bothZeroes(f, s)) return 0;
+
+        if (bothPositive(f, s)) {
+
+        } else if (bothNegative(f, s)) {
+
+        } else {
+
+        }
+    }
+
+    private static int modCompare(NE f, NE s) {
+
+        HashMap<String, Object> fState = f.get
+
+        return 0;
+    }
+
+    private static boolean differentSign(NE f, NE s) {
+        return ((f.isPositive() && !s.isPositive()) || (!f.isPositive() && s.isPositive()));
+    }
+
+    private static boolean bothPositive(NE f, NE s) {
+        return ((f.isPositive() && s.isPositive()));
+    }
+
+    private static boolean bothNegative(NE f, NE s) {
+        return ((!f.isPositive() && !s.isPositive()));
+    }
+
+    private static boolean bothZeroes(NE f, NE s) {
+        return ((f.isZero() && s.isZero()));
     }
 }
 

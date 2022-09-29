@@ -8,16 +8,25 @@ public class Test {
 
     public static void main(String[] args) {
 
-        NE ne = new NE();
-        ne.push(0);
-        ne.push(0);
-        ne.push(0);
-        ne.push(4);
-        ne.setIsInteger(false);
-        ne.push(0);
-        ne.push(0);
-        ne.push(4);
-        System.out.println(ne);        
+        System.out.println(NE.valueOf(-2));
+        System.out.println(NE.valueOf(+2));
+        System.out.println(NE.valueOf(2));
+        System.out.println(NE.valueOf(0));
+        System.out.println(NE.valueOf(-0));
+        System.out.println(NE.valueOf(+0));
+        System.out.println(NE.valueOf(259999));
+
+        System.out.println("***");
+
+        System.out.println(NE.valueOf(-2d));
+        System.out.println(NE.valueOf(+2.0));
+        System.out.println(NE.valueOf(2.000));
+        System.out.println(NE.valueOf(0d));
+        System.out.println(NE.valueOf(-0d));
+        System.out.println(NE.valueOf(+0d));
+        System.out.println(NE.valueOf(259999.33434));
+        System.out.println(NE.valueOf(-259999.33434));
+        System.out.println(NE.valueOf(-233e-3));
     }
 }
 
@@ -34,7 +43,7 @@ class NE implements Comparable<NE> {
     public NE push(int digit) {
 
         if (digit < 0 || digit > 9)
-            throw new Error(String.format("Invalid argument '%d' for 'pushDigit' function", digit));
+            throw new Error(String.format("Invalid argument '%d'", digit));
         
         (isInteger ? wholeNumberPart : decimalPart).addLast(digit);
 
@@ -92,7 +101,7 @@ class NE implements Comparable<NE> {
 
     public NE removeRedundandZeroes() {
 
-        byte tmp = 0;
+        int tmp = 0;
         while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
             wholeNumberPart.removeFirst();
         
@@ -105,25 +114,16 @@ class NE implements Comparable<NE> {
     @Override
     public String toString() {
 
-        String res = "0";
+        String w = wholeNumberPart.size() == 0 ? "" :
+            wholeNumberPart.stream().map(x -> x.toString()).reduce((a, b) -> a + b).get();
 
-        if (isZero()) return res;
+        String d = decimalPart.size() == 0 ? "" :
+            decimalPart.stream().map(x -> x.toString()).reduce((a, b) -> a + b).get();
 
-        if (!wholeNumberPartIsEmpty()) {
-            res = "";
-            String[] tmp = new String[]{res};
-            wholeNumberPart.forEach(x -> tmp[0] += String.valueOf(x));
-            res = tmp[0];
-        }
-
-        if (!decimalPartIsEmpty()) {
-            res += ".";
-            String[] tmp = new String[]{res};
-            decimalPart.forEach(x -> tmp[0] += String.valueOf(x));
-            res = tmp[0];
-        }
-
-        return res;
+        return String.format("{%s;%s;%s;%s;%s}",
+            super.toString(),
+            isPositive ? "positive" : "negative",
+            isInteger ? "integer" : "floating point", w, d);
     }
 
     public boolean isZero() {
@@ -132,6 +132,32 @@ class NE implements Comparable<NE> {
 
     public int compareTo(NE another) {
         return NEOps.compare(this, another);
+    }
+
+    public static NE valueOf(int i) {
+
+        NE ne = new NE();
+
+        ne.setIsPositive(i > 0);
+        if (i != 0) {
+            i *= i < 0 ? -1 : 1;
+            for (String digit : Integer.valueOf(i).toString().split(""))
+                ne.push(Integer.valueOf(digit));
+        }
+        return ne;
+    }
+
+    public static NE valueOf(double d) {
+
+        NE ne = new NE();
+
+        if (d - (int)d == 0) {
+            ne = valueOf((int)d);
+        } else if (d != 0d) {
+            
+        }
+
+        return ne;
     }
 
     private boolean wholeNumberPartIsEmpty() {
@@ -164,17 +190,23 @@ class NEOps {
         } else {
 
         }
+
+        return 0;
     }
 
     private static int modCompare(NE f, NE s) {
 
-        HashMap<String, Object> fState = f.get
+        
 
         return 0;
     }
 
     private static boolean differentSign(NE f, NE s) {
         return ((f.isPositive() && !s.isPositive()) || (!f.isPositive() && s.isPositive()));
+    }
+
+    private static boolean sametSign(NE f, NE s) {
+        return ((f.isPositive() && s.isPositive()) || (!f.isPositive() && !s.isPositive()));
     }
 
     private static boolean bothPositive(NE f, NE s) {

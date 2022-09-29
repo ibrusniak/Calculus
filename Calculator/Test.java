@@ -8,32 +8,17 @@ public class Test {
 
     public static void main(String[] args) {
 
-        System.out.println(NE.valueOf(-2));
-        System.out.println(NE.valueOf(+2));
-        System.out.println(NE.valueOf(2));
-        System.out.println(NE.valueOf(0));
-        System.out.println(NE.valueOf(-0));
-        System.out.println(NE.valueOf(+0));
-        System.out.println(NE.valueOf(259999));
+        double d = 4.33;
 
-        System.out.println("***");
-
-        System.out.println(NE.valueOf(-2d));
-        System.out.println(NE.valueOf(+2.0));
-        System.out.println(NE.valueOf(2.000));
-        System.out.println(NE.valueOf(0d));
-        System.out.println(NE.valueOf(-0d));
-        System.out.println(NE.valueOf(+0d));
-        System.out.println(NE.valueOf(259999.33434));
-        System.out.println(NE.valueOf(-259999.33434));
-        System.out.println(NE.valueOf(-233e-3));
+        System.out.println(NE.valueOf(d).toNormalizedString());
+        System.out.println(NE.valueOf(d));
     }
 }
 
 /**
  * NE - number entity - represents number entity with all its digits.
  */
-class NE implements Comparable<NE> {
+class NE implements Comparable<NE>, Cloneable {
 
     private ArrayDeque<Integer> wholeNumberPart = new ArrayDeque<>();
     private ArrayDeque<Integer> decimalPart = new ArrayDeque<>();
@@ -99,7 +84,7 @@ class NE implements Comparable<NE> {
         return this;
     }
 
-    public NE removeRedundandZeroes() {
+    private NE removeRedundandZeroes() {
 
         int tmp = 0;
         while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
@@ -109,6 +94,31 @@ class NE implements Comparable<NE> {
             decimalPart.removeLast();
 
         return this;
+    }
+
+    public String toNormalizedString() {
+        
+        String s = "";
+        NE another = clone().removeRedundandZeroes();
+
+        if (another.wholeNumberPartContainsOnlyZeroes() && another.decimalPartContainsOnlyZeroes()) {
+            s = "0";
+        } else {
+
+            if (!another.wholeNumberPartIsEmpty()) {
+                for (Integer i : another.getWholeNumberPart())
+                    s += i.toString();
+            }
+
+            if (!decimalPartIsEmpty()) {
+                for (Integer i : another.getDecimalPart())
+                    s += i.toString();
+            }
+
+            if (!another.isPositive()) s = "-" + s;
+        }
+
+        return s;
     }
 
     @Override
@@ -124,6 +134,19 @@ class NE implements Comparable<NE> {
             super.toString(),
             isPositive ? "positive" : "negative",
             isInteger ? "integer" : "floating point", w, d);
+    }
+
+    @Override
+    public NE clone() {
+
+        NE copy = new NE();
+
+        copy.setIsInteger(isInteger);
+        copy.setIsPositive(isPositive);
+        wholeNumberPart.forEach(x -> copy.getWholeNumberPart().addLast(x));
+        decimalPart.forEach(x -> copy.getDecimalPart().addLast(x));
+
+        return copy;
     }
 
     public boolean isZero() {
@@ -168,11 +191,11 @@ class NE implements Comparable<NE> {
         return decimalPart.size() == 0;
     }
 
-    private boolean wholeNumberPartContainsOnlyZeroes() {
+    public boolean wholeNumberPartContainsOnlyZeroes() {
         return wholeNumberPart.stream().allMatch(x -> x == 0);
     }
 
-    private boolean decimalPartContainsOnlyZeroes() {
+    public boolean decimalPartContainsOnlyZeroes() {
         return decimalPart.stream().allMatch(x -> x == 0);
     }
 }

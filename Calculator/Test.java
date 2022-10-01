@@ -6,43 +6,11 @@ import java.util.Iterator;
 public class Test {
 
     public static void main(String[] args) {
-        
 
-        NumberEntity ne = new NumberEntity();
+        NumberEntity ne = NumberEntity.from("156.255");
 
-        ne
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(2)
-            .push(0)
-            .push(0)
-            .push(0)
-            ;
-
-        ne.resetPositiveFlag();
-
-        ne.resetIntegerFlag();
-
-            ne.push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            ;
-
-        System.out.println(ne.toDebugString());
         System.out.println(ne);
+        System.out.println(ne.toDebugString());
     }
 }
 
@@ -136,6 +104,37 @@ class NumberEntity implements Cloneable {
     
     public NumberEntity normalize() {
         return removeRedundandZeroes();
+    }
+
+    public static NumberEntity from(int i) throws IllegalArgumentException {
+        return from(String.valueOf(i));
+    }
+
+    public static NumberEntity from(double i) throws IllegalArgumentException {
+        
+        if (i == Double.NaN || i == Double.POSITIVE_INFINITY || i == Double.NEGATIVE_INFINITY)
+            throw new IllegalArgumentException(String.valueOf(i));
+        return from(String.format("%01254.632f", i));
+    }
+
+    public static NumberEntity from(String s) throws IllegalArgumentException {
+
+        if (!s.matches("(^[-+]{0,1}\\d*\\.\\d*$)|(^[-+]{0,1}\\d*$)") || s.matches("(^0+\\.0+$)|(^0+$)"))
+            throw new IllegalArgumentException(s);
+        NumberEntity ne = new NumberEntity();
+        if (s.contains("-")) ne.resetPositiveFlag();
+        s = s.replaceAll("[+-]", "");
+        if (s.contains(".")) {
+            for (String st : s.split("\\.")[0].split(""))
+                ne.push(Byte.valueOf(st));
+            ne.resetIntegerFlag();
+            for (String st : s.split("\\.")[1].split(""))
+                ne.push(Byte.valueOf(st));
+        } else {
+            for (String st : s.split(""))
+                ne.push(Byte.valueOf(st));
+        }
+        return ne.removeRedundandZeroes();
     }
 
     private NumberEntity removeRedundandZeroes() {

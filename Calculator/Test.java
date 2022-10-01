@@ -106,6 +106,14 @@ class NumberEntity implements Cloneable {
         return removeRedundandZeroes();
     }
 
+    public boolean isZero() {
+
+        return (intPart.isEmpty() && decPart.isEmpty())
+            || (intPart.stream().allMatch(x -> x.equals("0")) && decPart.stream().allMatch(x -> x.equals("0")))
+            || (intPart.isEmpty() && decPart.stream().allMatch(x -> x.equals("0")))
+            || (intPart.stream().allMatch(x -> x.equals("0")) && decPart.isEmpty());
+    }
+
     public static NumberEntity from(int i) throws IllegalArgumentException {
         return from(String.valueOf(i));
     }
@@ -158,6 +166,14 @@ class NumberEntity implements Cloneable {
 
         Optional<String> o = decPart.stream().map(x -> String.valueOf(x)).reduce((x, y) -> x + y);
         return o.isEmpty() ? "" : o.get();
+    }
+}
+
+class NumberEntityOperations {
+
+    public static int compare (NumberEntity ne1, NumberEntity ne2) {
+
+        return 0;
     }
 }
 

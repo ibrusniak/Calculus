@@ -31,7 +31,11 @@ public class Test {
             .push(0)
             .push(0)
             .push(0)
-            .push(2)
+            .push(0)
+            .push(0)
+            .push(0)
+            .push(0)
+            .push(0)
             .push(0)
             .push(0)
             .push(0)
@@ -99,7 +103,13 @@ class NumberEntity implements Cloneable {
 
     @Override
     public String toString() {
-        return clone().removeRedundandZeroes().toDebugString();
+
+        NumberEntity clone = clone();
+        clone.removeRedundandZeroes();
+        return
+            (positive ? "" : "-")
+            + (clone.intPartAsString().isEmpty() ? "0" : clone.intPartAsString())
+            + (clone.decPartAsString().isEmpty() ? "" : "." + clone.decPartAsString());
     }
 
     public String toDebugString() {
@@ -130,10 +140,12 @@ class NumberEntity implements Cloneable {
 
     private NumberEntity removeRedundandZeroes() {
 
-        while (intPart.size() > 1 && intPart.getFirst() == 0)
+        while (intPart.size() > 0 && intPart.getFirst() == 0)
             intPart.removeFirst();
-        while (decPart.size() > 1 && decPart.getLast() == 0)
+        while (decPart.size() > 0 && decPart.getLast() == 0)
             decPart.removeLast();
+        if (decPart.isEmpty())
+            integer = true;
         return this;
     }
 

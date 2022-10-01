@@ -1,11 +1,13 @@
 
 import java.util.ArrayDeque;
 import java.util.Optional;
+import java.util.Iterator;
 
 public class Test {
 
     public static void main(String[] args) {
         
+
         NumberEntity ne = new NumberEntity();
 
         ne
@@ -17,47 +19,26 @@ public class Test {
             .push(2)
             .push(0)
             .push(0)
+            .push(0)
+            ;
+
+        ne.resetPositiveFlag();
+
+        ne.resetIntegerFlag();
+
+            ne.push(0)
+            .push(0)
+            .push(0)
+            .push(0)
+            .push(0)
             .push(2)
             .push(0)
             .push(0)
             .push(0)
-            .push(3)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0);
-        
+            ;
+
+        System.out.println(ne.toDebugString());
         System.out.println(ne);
-
-        ne.resetIntegerFlag();
-
-        ne
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(3)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(4)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0)
-            .push(0);
-
-        System.out.println(ne);
-        System.out.println(ne.toNormalizedString());
     }
 }
 
@@ -118,12 +99,14 @@ class NumberEntity implements Cloneable {
 
     @Override
     public String toString() {
+        return clone().removeRedundandZeroes().toDebugString();
+    }
 
-        Optional o1 = intPart.stream().map(x -> String.valueOf(x)).reduce((x, y) -> x + y);
-        Optional o2 = decPart.stream().map(x -> String.valueOf(x)).reduce((x, y) -> x + y);
+    public String toDebugString() {
+
         return String.format("{%s;%s;%s}", positive ? "+" : "-",
-            o1.isEmpty() ? "" : o1.get(),
-            o2.isEmpty() ? "" : o2.get());
+            intPartAsString(),
+            decPartAsString());
     }
 
     @Override
@@ -140,18 +123,30 @@ class NumberEntity implements Cloneable {
         }
         return ne;
     }
-
-    public String toNormalizedString() {
-        return clone().removeRedundandZeroes().toString();
+    
+    public NumberEntity normalize() {
+        return removeRedundandZeroes();
     }
 
-    public NumberEntity removeRedundandZeroes() {
+    private NumberEntity removeRedundandZeroes() {
 
         while (intPart.size() > 1 && intPart.getFirst() == 0)
             intPart.removeFirst();
         while (decPart.size() > 1 && decPart.getLast() == 0)
             decPart.removeLast();
         return this;
+    }
+
+    private String intPartAsString() {
+
+        Optional<String> o = intPart.stream().map(x -> String.valueOf(x)).reduce((x, y) -> x + y);
+        return o.isEmpty() ? "" : o.get();
+    }
+
+    private String decPartAsString() {
+
+        Optional<String> o = decPart.stream().map(x -> String.valueOf(x)).reduce((x, y) -> x + y);
+        return o.isEmpty() ? "" : o.get();
     }
 }
 

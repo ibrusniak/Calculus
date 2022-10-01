@@ -8,10 +8,15 @@ public class Test {
 
     public static void main(String[] args) {
 
-        double d = 4.33;
+        System.out.println(NE.valueOf(4.01).toNormalizedString());
+        System.out.println(NE.valueOf(4.01));
 
-        System.out.println(NE.valueOf(d).toNormalizedString());
-        System.out.println(NE.valueOf(d));
+        System.out.println(NE.valueOf(-4.0));
+        System.out.println(NE.valueOf(-4.0).toNormalizedString());
+        System.out.println(NE.valueOf(4.00001));
+        System.out.println(NE.valueOf(4.00001).toNormalizedString());
+        System.out.println(NE.valueOf(0.000000001));
+        System.out.println(NE.valueOf(0.000000001).toNormalizedString());
     }
 }
 
@@ -84,18 +89,6 @@ class NE implements Comparable<NE>, Cloneable {
         return this;
     }
 
-    private NE removeRedundandZeroes() {
-
-        int tmp = 0;
-        while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
-            wholeNumberPart.removeFirst();
-        
-        while (!decimalPartIsEmpty() && (tmp = decimalPart.getLast()) == 0)
-            decimalPart.removeLast();
-
-        return this;
-    }
-
     public String toNormalizedString() {
         
         String s = "";
@@ -111,6 +104,9 @@ class NE implements Comparable<NE>, Cloneable {
             }
 
             if (!decimalPartIsEmpty()) {
+                if (another.wholeNumberPartIsEmpty())
+                    s += "0";
+                s += ".";
                 for (Integer i : another.getDecimalPart())
                     s += i.toString();
             }
@@ -178,6 +174,18 @@ class NE implements Comparable<NE>, Cloneable {
             ne = valueOf((int)d);
         } else if (d != 0d) {
             
+            String s = String.format("%0100.50f", d);
+
+            for (String st : s.split("\\.")[0].split(""))
+                ne.push(Integer.valueOf(st));
+
+            ne.isInteger = false;
+
+            for (String st : s.split("\\.")[1].split(""))
+                ne.push(Integer.valueOf(st));
+            
+            ne.removeRedundandZeroes();
+            ne.isPositive = d > 0;
         }
 
         return ne;
@@ -193,6 +201,18 @@ class NE implements Comparable<NE>, Cloneable {
 
     public boolean wholeNumberPartContainsOnlyZeroes() {
         return wholeNumberPart.stream().allMatch(x -> x == 0);
+    }
+
+    private NE removeRedundandZeroes() {
+
+        int tmp = 0;
+        while (!wholeNumberPartIsEmpty() && (tmp = wholeNumberPart.getFirst()) == 0)
+            wholeNumberPart.removeFirst();
+        
+        while (!decimalPartIsEmpty() && (tmp = decimalPart.getLast()) == 0)
+            decimalPart.removeLast();
+
+        return this;
     }
 
     public boolean decimalPartContainsOnlyZeroes() {

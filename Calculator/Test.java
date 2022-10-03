@@ -6,14 +6,13 @@ public class Test {
 
     public static void main(String[] args) {
 
-        NumberEntity a = NumberEntity.from(0.95);
-        NumberEntity b = NumberEntity.from(0.25);
+        NumberEntity a = NumberEntity.from(2.9);
+        NumberEntity b = NumberEntity.from(11.7);
 
         System.out.println(a);
         System.out.println(b);
 
         NumberEntity sum = NumberEntity.addModulo(a, b);
-
         System.out.println(sum);
     }
 }
@@ -84,11 +83,18 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
 
         NumberEntity clone = clone();
         clone.removeRedundandZeroes();
-        String s =
+        return
             (positive ? "" : "-")
             + (clone.intPartAsString().isEmpty() ? "0" : clone.intPartAsString())
             + (clone.decPartAsString().isEmpty() ? "" : "." + clone.decPartAsString());
-        return s;
+    }
+
+    public String toStringWithPaddingZeroes() {
+
+        return
+            (positive ? "" : "-")
+            + (intPartAsString().isEmpty() ? "0" : intPartAsString())
+            + (decPartAsString().isEmpty() ? "" : "." + decPartAsString());
     }
 
     public String toDebugString() {
@@ -138,36 +144,33 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         return result;
     }
 
-    public static NumberEntity addModulo(NumberEntity first, NumberEntity second) {
+    public static NumberEntity addModulo(final NumberEntity first, final NumberEntity second) {
 
         NumberEntity a = first.clone();
         NumberEntity b = second.clone();
-        int intDigitCount = Integer.max(a.intPart.size(), b.intPart.size());
-        int decDigitCount = Integer.max(a.decPart.size(), b.decPart.size());
-        a.removeRedundandZeroes().padWithZeroesToWidth(intDigitCount, decDigitCount);
-        b.removeRedundandZeroes().padWithZeroesToWidth(intDigitCount, decDigitCount);
-        ArrayDeque<Byte> allDigitsA = a.allDigits();
-        ArrayDeque<Byte> allDigitsB = b.allDigits();
-        ArrayDeque<Byte> allDigitsResult = new ArrayDeque<>();
+        padWithZeroesToWidthPair(a, b);
+        int intDigitCount = a.intPart.size();
+        int decDigitCount = a.decPart.size();
+        ArrayDeque<Byte> digitSequenceA = a.getDigitSequence();
+        ArrayDeque<Byte> digitSequenceB = b.getDigitSequence();
+        ArrayDeque<Byte> digitSequenceResult = new ArrayDeque<>();
         NumberEntity result = new NumberEntity();
         boolean overflow = false;
-        while (allDigitsA.size() > 0) {
-            byte b1 = allDigitsA.pollLast();
-            byte b2 = allDigitsB.pollLast();
-            byte locResult = (byte)(b1 + b2 + (overflow ? 1 : 0));
+        while (digitSequenceA.size() > 0) {
+            byte locResult = (byte)(digitSequenceA.pollLast() + digitSequenceB.pollLast() + (overflow ? 1 : 0));
             if (locResult > 9) {
                 locResult -= 10;
                 overflow = true;
             } else {
                 overflow = false;
             }
-            allDigitsResult.push(locResult);
+            digitSequenceResult.push(locResult);
         }
-        if (overflow) allDigitsResult.push((byte)1);
-        int resultSize = allDigitsResult.size();
+        if (overflow) digitSequenceResult.push((byte)1);
+        int resultSize = digitSequenceResult.size();
         for (int i = 0; i < resultSize; i++) {
             if (i == resultSize - decDigitCount) result.resetIntegerFlag();
-            result.push(allDigitsResult.pollFirst());
+            result.push(digitSequenceResult.pollFirst());
         }
         return result;
     }
@@ -243,10 +246,7 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
 
         NumberEntity a = first.clone();
         NumberEntity b = second.clone();
-        a.removeRedundandZeroes().padWithZeroesToWidth(Integer.max(a.intPart.size(), b.intPart.size()),
-            Integer.max(a.decPart.size(), b.decPart.size()));
-        b.removeRedundandZeroes().padWithZeroesToWidth(Integer.max(a.intPart.size(), b.intPart.size()),
-            Integer.max(a.decPart.size(), b.decPart.size()));
+        padWithZeroesToWidthPair(a, b);
         while (a.intPart.size() > 0) {
             byte b1 = a.intPart.pollFirst();
             byte b2 = b.intPart.pollFirst();
@@ -262,14 +262,22 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         return 0;
     }
 
-    public ArrayDeque<Byte> allDigits() {
+    private static void padWithZeroesToWidthPair(NumberEntity a, NumberEntity b) {
 
-        ArrayDeque<Byte> allDigits = new ArrayDeque<>();
+        a.removeRedundandZeroes().padWithZeroesToWidth(Integer.max(a.intPart.size(), b.intPart.size()),
+            Integer.max(a.decPart.size(), b.decPart.size()));
+        b.removeRedundandZeroes().padWithZeroesToWidth(Integer.max(a.intPart.size(), b.intPart.size()),
+            Integer.max(a.decPart.size(), b.decPart.size()));
+    }
+
+    private ArrayDeque<Byte> getDigitSequence() {
+
+        ArrayDeque<Byte> ds = new ArrayDeque<>();
         for (Byte b : intPart)
-            allDigits.addLast(b);
+            ds.addLast(b);
         for (Byte b : decPart)
-            allDigits.addLast(b);
-        return allDigits;
+            ds.addLast(b);
+        return ds;
     }
 }
 

@@ -6,13 +6,15 @@ public class Test {
 
     public static void main(String[] args) {
 
-        NumberEntity a = NumberEntity.from("00000.00000");
-        NumberEntity b = NumberEntity.from(0);
+        NumberEntity a = NumberEntity.from(0.95);
+        NumberEntity b = NumberEntity.from(0.25);
 
         System.out.println(a);
         System.out.println(b);
 
-        System.out.println(a.compareTo(b));
+        NumberEntity sum = NumberEntity.addModulo(a, b);
+
+        System.out.println(sum);
     }
 }
 
@@ -61,6 +63,10 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         return this;
     }
 
+    public boolean getIntegerFlag() {
+        return integer;
+    }
+
     public NumberEntity setPositiveFlag() {
         
         positive = true;
@@ -78,10 +84,11 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
 
         NumberEntity clone = clone();
         clone.removeRedundandZeroes();
-        return
+        String s =
             (positive ? "" : "-")
             + (clone.intPartAsString().isEmpty() ? "0" : clone.intPartAsString())
             + (clone.decPartAsString().isEmpty() ? "" : "." + clone.decPartAsString());
+        return s;
     }
 
     public String toDebugString() {
@@ -124,9 +131,43 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         if (positive != another.positive) {
             result = positive ? 1 : -1;
         } else if (positive && another.positive) {
-            result = compareToByModule(this, another);
+            result = compareToModulo(this, another);
         } else {
-            result = -1 * compareToByModule(this, another);
+            result = -1 * compareToModulo(this, another);
+        }
+        return result;
+    }
+
+    public static NumberEntity addModulo(NumberEntity first, NumberEntity second) {
+
+        NumberEntity a = first.clone();
+        NumberEntity b = second.clone();
+        int intDigitCount = Integer.max(a.intPart.size(), b.intPart.size());
+        int decDigitCount = Integer.max(a.decPart.size(), b.decPart.size());
+        a.removeRedundandZeroes().padWithZeroesToWidth(intDigitCount, decDigitCount);
+        b.removeRedundandZeroes().padWithZeroesToWidth(intDigitCount, decDigitCount);
+        ArrayDeque<Byte> allDigitsA = a.allDigits();
+        ArrayDeque<Byte> allDigitsB = b.allDigits();
+        ArrayDeque<Byte> allDigitsResult = new ArrayDeque<>();
+        NumberEntity result = new NumberEntity();
+        boolean overflow = false;
+        while (allDigitsA.size() > 0) {
+            byte b1 = allDigitsA.pollLast();
+            byte b2 = allDigitsB.pollLast();
+            byte locResult = (byte)(b1 + b2 + (overflow ? 1 : 0));
+            if (locResult > 9) {
+                locResult -= 10;
+                overflow = true;
+            } else {
+                overflow = false;
+            }
+            allDigitsResult.push(locResult);
+        }
+        if (overflow) allDigitsResult.push((byte)1);
+        int resultSize = allDigitsResult.size();
+        for (int i = 0; i < resultSize; i++) {
+            if (i == resultSize - decDigitCount) result.resetIntegerFlag();
+            result.push(allDigitsResult.pollFirst());
         }
         return result;
     }
@@ -198,7 +239,7 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         return this;
     }
 
-    private int compareToByModule(NumberEntity first, NumberEntity second) {
+    private int compareToModulo(NumberEntity first, NumberEntity second) {
 
         NumberEntity a = first.clone();
         NumberEntity b = second.clone();
@@ -220,9 +261,15 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         }
         return 0;
     }
-}
 
-class NumberEntityOperations {
-    
+    public ArrayDeque<Byte> allDigits() {
+
+        ArrayDeque<Byte> allDigits = new ArrayDeque<>();
+        for (Byte b : intPart)
+            allDigits.addLast(b);
+        for (Byte b : decPart)
+            allDigits.addLast(b);
+        return allDigits;
+    }
 }
 

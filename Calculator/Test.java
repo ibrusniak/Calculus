@@ -6,8 +6,8 @@ public class Test {
 
     public static void main(String[] args) {
 
-        NumberEntity a = NumberEntity.from(101.0002);
-        NumberEntity b = NumberEntity.from(10.0003);
+        NumberEntity a = NumberEntity.from(10);
+        NumberEntity b = NumberEntity.from(18);
 
         System.out.println(a);
         System.out.println(b);
@@ -289,10 +289,23 @@ class NumberEntity implements Cloneable, Comparable<NumberEntity> {
         return digitSequenceResult;
     }
 
-    private static ArrayDeque<Byte> copyDS(ArrayDeque<Byte> original) {
+    private static ArrayDeque<Byte> subDS(ArrayDeque<Byte> digitSequenceA, ArrayDeque<Byte> digitSequenceB)
+                                            throws IllegalArgumentException {
 
-        ArrayDeque<Byte> copy = new ArrayDeque<>(original);
-        return copy;
+        if ((digitSequenceA.size() < digitSequenceB.size())
+                || ((digitSequenceA.size() == digitSequenceB.size())
+                    && (digitSequenceA.getFirst() < digitSequenceB.getFirst())))
+            throw new IllegalArgumentException();
+
+        ArrayDeque<Byte> digitSequenceACopy = copyDS(digitSequenceA);
+        ArrayDeque<Byte> digitSequenceBCopy = copyDS(digitSequenceB);
+        
+        ArrayDeque<Byte> digitSequenceResult = new ArrayDeque<>();
+        return digitSequenceResult;
+    }
+
+    private static ArrayDeque<Byte> copyDS(ArrayDeque<Byte> original) {
+        return new ArrayDeque<>(original);
     }
 }
 

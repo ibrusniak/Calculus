@@ -1,6 +1,7 @@
 package com.ibrusniak;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 public class NumberContainer {
 
@@ -35,6 +36,29 @@ public class NumberContainer {
         integerPartToString() + fractionalPartToString());
     }
     
+    public static NumberContainer fromDouble(Double i) {
+        
+        String str = String.format(Locale.US, "%308.325f", i);
+        Integer[] intPart = Arrays.stream((str.substring(0, str.indexOf("."))).split(""))
+            .map(Integer::valueOf)
+            .toArray(x -> new Integer[x]);
+        Integer[] fracPart = Arrays.stream((str.substring(str.indexOf(".") + 1, str.length())).split(""))
+            .map(Integer::valueOf)
+            .toArray(x -> new Integer[x]);
+        fracPart = Arrays.stream(reverseArray(fracPart))
+            .dropWhile(x -> x == 0)
+            .toArray(x -> new Integer[x]);
+        fracPart = reverseArray(fracPart);
+        NumberContainer n = new NumberContainer();
+        Arrays.stream(intPart).forEach(n::addDigit);
+        if(fracPart.length != 0) {
+            n.addDot();
+            Arrays.stream(fracPart)
+                .forEach(n::addDigit);
+        }
+        return n;
+    }
+
     private void bsFractionalPart() {
         
          if (fractionalPart.length <= 1) {
@@ -97,5 +121,13 @@ public class NumberContainer {
         return "." + Arrays.stream(fractionalPart)
             .map(String::valueOf)
             .reduce((x, y) -> x + y).get();
+    }
+
+    private static Integer[] reverseArray(Integer[] array) {
+
+        Integer[] res = new Integer[array.length];
+        for (int i = 0, j = array.length - 1; i < array.length; i++, j--)
+            res[i] = array[j];
+        return res;
     }
 }

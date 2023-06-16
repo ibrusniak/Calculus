@@ -18,7 +18,6 @@ public class Test1 {
             .addDigit(0);
 
         println(num1);
-
         num1.addDot();
 
         num1.addDigit(0)
@@ -40,7 +39,9 @@ public class Test1 {
         .addDigit(0)
         .addDigit(0)
         .addDigit(0);
-
+        
+        println(num1);
+        num1.backSpace();
         println(num1);
     }
 }

@@ -3,7 +3,7 @@ package com.ibrusniak;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class NumberContainer {
+public class Num {
 
     private boolean integerNumber = true;
     private boolean positiveNumber = true;
@@ -17,7 +17,7 @@ public class NumberContainer {
         positiveNumber = false;
     }
 
-    public NumberContainer addDigit(Integer digit) {
+    public Num addDigit(Integer digit) {
 
         if (integerNumber)
             addDigitToIntegerPart(digit);
@@ -26,7 +26,7 @@ public class NumberContainer {
         return this;
     }
 
-    public NumberContainer backSpace() {
+    public Num backSpace() {
         
         if (integerNumber)
             bsIntegerPart();
@@ -53,10 +53,10 @@ public class NumberContainer {
         return false;
     }
 
-    public static NumberContainer fromDouble(Double i) {
+    public static Num fromDouble(Double i) {
         
         Double f = i;
-        NumberContainer n = new NumberContainer();
+        Num n = new Num();
         if (f < 0) {
             n.setNegativeNumber();
             f *= -1;
@@ -82,10 +82,10 @@ public class NumberContainer {
         return n;
     }
 
-    public static NumberContainer fromInt(final Integer i) {
+    public static Num fromInt(final Integer i) {
         
         Integer f = i;
-        NumberContainer n = new NumberContainer();
+        Num n = new Num();
         if (f < 0) {
             n.setNegativeNumber();
             f *= -1;

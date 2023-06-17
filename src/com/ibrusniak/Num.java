@@ -2,6 +2,8 @@ package com.ibrusniak;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.stream.Stream;
 
 public class Num implements Comparable<Num> {
 
@@ -19,10 +21,10 @@ public class Num implements Comparable<Num> {
             isPositiveNumber = false;
         }
         Arrays.stream(String.valueOf(from).split(""))
-            .map(Integer::valueOf)
-            .forEach(this::addDigit);
+        .map(Integer::valueOf)
+        .forEach(this::addDigit);
     }
-
+    
     public void setIsFractionalNumber() {
 
         isFractionalNumber = true;
@@ -89,5 +91,13 @@ public class Num implements Comparable<Num> {
 
     private int fullWeight() {
         return weight(integerPart) + weight(fractionalPart);
+    }
+
+    private String[] reverseArray(String[] source) {
+
+        String[] target = new String[source.length];
+        for (int i = 0, j = source.length - 1; i < source.length; i++, j--)
+            target[i] = source[j];
+        return target;
     }
 }

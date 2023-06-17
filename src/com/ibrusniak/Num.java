@@ -45,6 +45,16 @@ public class Num {
             integerPartToString() + fractionalPartToString());
     }
     
+    @Override
+    public boolean equals(Object other) {
+
+        if (!(other instanceof Num)) return false;
+        return
+            (Arrays.compare(integerPart, ((Num)other).integerPart) == 0)
+                &&
+            (Arrays.compare(fractionalPart, ((Num)other).fractionalPart) == 0);
+    }
+
     public boolean isZero() {
 
         if ((integerPart.length == 0 && fractionalPart.length == 0) ||

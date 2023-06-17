@@ -1,6 +1,7 @@
 package com.ibrusniak;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 
 public class Num implements Comparable<Num> {
 
@@ -8,6 +9,19 @@ public class Num implements Comparable<Num> {
     private ArrayDeque<Integer> fractionalPart = new ArrayDeque<>();
     private boolean isFractionalNumber = false;
     private boolean isPositiveNumber = true;
+
+    public Num(int from) {
+
+        if (from == Integer.MIN_VALUE)
+            throw new Error("int argument too small!");
+        if (from < 0) {
+            from *= -1;
+            isPositiveNumber = false;
+        }
+        Arrays.stream(String.valueOf(from).split(""))
+            .map(Integer::valueOf)
+            .forEach(this::addDigit);
+    }
 
     public void setIsFractionalNumber() {
 
@@ -40,7 +54,9 @@ public class Num implements Comparable<Num> {
     @Override
     public String toString() {
 
-        return (integerPart.isEmpty() ? "0" : integerPart.toString())
+        return
+            (isPositiveNumber ? "" : "-")
+            + (integerPart.isEmpty() ? "0" : integerPart.toString())
             + (fractionalPart.isEmpty() ? "" : "." + fractionalPart.toString());
     }
 

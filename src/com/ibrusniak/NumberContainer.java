@@ -6,10 +6,16 @@ import java.util.Locale;
 public class NumberContainer {
 
     private boolean integerNumber = true;
+    private boolean positiveNumber = true;
     private Integer[] integerPart = new Integer[0];
     private Integer[] fractionalPart = new Integer[0];
 
     public void addDot() { integerNumber = false; }
+
+    public void setNegativeNumber() {
+
+        positiveNumber = false;
+    }
 
     public NumberContainer addDigit(Integer digit) {
 
@@ -32,13 +38,22 @@ public class NumberContainer {
     @Override
     public String toString() {
 
-        return String.format("[%s@%s{%s}]", getClass().getSimpleName(), hashCode(),
-        integerPartToString() + fractionalPartToString());
+        return String.format("[%s@%s{%s%s}]",
+            getClass().getSimpleName(),
+            hashCode(),
+            positiveNumber ? "" : "-",
+            integerPartToString() + fractionalPartToString());
     }
     
     public static NumberContainer fromDouble(Double i) {
         
-        String str = String.format(Locale.US, "%308.325f", i);
+        Double f = i;
+        NumberContainer n = new NumberContainer();
+        if (f < 0) {
+            n.setNegativeNumber();
+            f *= -1;
+        }
+        String str = String.format(Locale.US, "%308.325f", f);
         Integer[] intPart = Arrays.stream((str.substring(0, str.indexOf("."))).split(""))
             .map(Integer::valueOf)
             .toArray(x -> new Integer[x]);
@@ -49,13 +64,27 @@ public class NumberContainer {
             .dropWhile(x -> x == 0)
             .toArray(x -> new Integer[x]);
         fracPart = reverseArray(fracPart);
-        NumberContainer n = new NumberContainer();
-        Arrays.stream(intPart).forEach(n::addDigit);
+        Arrays.stream(intPart)
+            .forEach(n::addDigit);
         if(fracPart.length != 0) {
             n.addDot();
             Arrays.stream(fracPart)
                 .forEach(n::addDigit);
         }
+        return n;
+    }
+
+    public static NumberContainer fromInt(final Integer i) {
+        
+        Integer f = i;
+        NumberContainer n = new NumberContainer();
+        if (f < 0) {
+            n.setNegativeNumber();
+            f *= -1;
+        }
+        Arrays.stream(String.valueOf(f).split(""))
+            .map(Integer::valueOf)
+            .forEach(n::addDigit);
         return n;
     }
 

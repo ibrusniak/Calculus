@@ -45,6 +45,14 @@ public class NumberContainer {
             integerPartToString() + fractionalPartToString());
     }
     
+    public boolean isZero() {
+
+        if ((integerPart.length == 0 && fractionalPart.length == 0) ||
+        (Arrays.stream(integerPart).allMatch(x -> x == 0)
+            && Arrays.stream(fractionalPart).allMatch(x -> x == 0))) return true;
+        return false;
+    }
+
     public static NumberContainer fromDouble(Double i) {
         
         Double f = i;

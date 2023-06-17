@@ -1,13 +1,19 @@
 package com.ibrusniak;
 
 import static com.ibrusniak.Utils.*;
+import static com.ibrusniak.NumberProcessor.*;
 
 public class Test1 {
 
     public static void main(String[] args) {
 
-        NumberContainer num1 = NumberContainer.fromDouble(-0000095e-4d);
-        // NumberContainer num1 = NumberContainer.fromInt(-200345223);
-        println(num1);
+        NumberContainer
+            operand1 = NumberContainer.fromInt(200),
+            operand2 = NumberContainer.fromInt(-403);
+        
+            println(operand1, operand2, addition(operand1, operand2));
+            // println(operand1, operand2, substraction(operand1, operand2));
+            // println(operand1, operand2, musltiplication(operand1, operand2));
+            // println(operand1, operand2, division(operand1, operand2));
     }
 }

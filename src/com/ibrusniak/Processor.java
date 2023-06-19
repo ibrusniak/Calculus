@@ -9,6 +9,11 @@ public class Processor {
         if (n1.equals(emptyNum)) return n2;
         if (n2.equals(emptyNum)) return n1;
 
+
         return new Num(500);
+    }
+
+    private Num summarizeByModule(Num n1, Num n2) {
+        return new Num();
     }
 }

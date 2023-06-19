@@ -79,6 +79,10 @@ public class Num implements Comparable<Num> {
 
     public void switchIsPositiveFlag() {
 
+        if ((integerPart.isEmpty() && fractionalPart.isEmpty())
+            || ((integerPart.stream().allMatch(x -> x.equals(0)))
+                    && (fractionalPart.stream().allMatch(x -> x.equals(0)))))
+            throw new Error("Can't change positive flag if number is equivaletn of '0'");
         isPositiveNumber = !isPositiveNumber;
     }
 
@@ -112,6 +116,10 @@ public class Num implements Comparable<Num> {
     @Override
     public int compareTo(Num o) {
         
+        if (isPositiveNumber != o.isPositiveNumber) {
+            if (isPositiveNumber) return 1;
+            if (!isFractionalNumber) return -1;
+        }
         if (integerPart.size() != o.integerPart.size())
             return Integer.compare(integerPart.size(), o.integerPart.size());
         return Integer.compare(fullWeight(), o.fullWeight());

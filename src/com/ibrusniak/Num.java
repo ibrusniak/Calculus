@@ -1,8 +1,13 @@
 package com.ibrusniak;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Locale;
+
 
 public class Num implements Comparable<Num> {
 
@@ -35,13 +40,35 @@ public class Num implements Comparable<Num> {
             isPositiveNumber = false;
         }
         String st = String.format(Locale.US, "%309.325f", from);
+
+        String[] stIntPart = st.split("\\.")[0].split("");
+        String[] stFracPart = st.split("\\.")[1].split("");
+        
         // Add integer part of the number
-        Arrays.stream(st.split("\\.")[0].split(""))
+        Arrays.stream(stIntPart)
             .map(Integer::valueOf)
             .forEach(integerPart::add);
 
+        /**
+        * Fractional part algorithm:
+        * reverse
+        * remove redundand zeroes
+        * reverse
+        * add
+        */
         
+        // If all fractional part is zeroes
+        if (Arrays.stream(stFracPart).allMatch(x -> x.equals("0"))) return;
 
+        ArrayList<String> listFracPart = new ArrayList<>();
+        Collections.addAll(listFracPart, stFracPart);
+        Collections.reverse(listFracPart);
+        List<String> l = listFracPart.stream().dropWhile(x -> x.equals("0")).toList();
+        ArrayList<String> l2 = new ArrayList<>(l);
+        Collections.reverse(l2);
+        l2.stream()
+            .map(Integer::valueOf)
+            .forEach(fractionalPart::add);
     }
 
     public void setIsFractionalNumber() {

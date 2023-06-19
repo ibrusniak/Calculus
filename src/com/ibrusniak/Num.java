@@ -3,7 +3,6 @@ package com.ibrusniak;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.stream.Stream;
 
 public class Num implements Comparable<Num> {
 
@@ -21,10 +20,30 @@ public class Num implements Comparable<Num> {
             isPositiveNumber = false;
         }
         Arrays.stream(String.valueOf(from).split(""))
-        .map(Integer::valueOf)
-        .forEach(this::addDigit);
+            .map(Integer::valueOf)
+            .forEach(this::addDigit);
     }
     
+    public Num(double from) {
+
+        if (from == Double.NEGATIVE_INFINITY || from == Double.POSITIVE_INFINITY) {
+            throw new Error(String.format("Argument '%s' not allowed!", from));
+        }
+        if (from == Double.MIN_VALUE) from *= -1;
+        if (from < 0) {
+            from *= -1;
+            isPositiveNumber = false;
+        }
+        String st = String.format(Locale.US, "%309.325f", from);
+        // Add integer part of the number
+        Arrays.stream(st.split("\\.")[0].split(""))
+            .map(Integer::valueOf)
+            .forEach(integerPart::add);
+
+        
+
+    }
+
     public void setIsFractionalNumber() {
 
         isFractionalNumber = true;

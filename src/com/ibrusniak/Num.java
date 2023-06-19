@@ -15,6 +15,8 @@ public class Num implements Comparable<Num> {
     private boolean isFractionalNumber = false;
     private boolean isPositiveNumber = true;
 
+    public Num() {}
+
     public Num(int from) {
 
         if (from == Integer.MIN_VALUE)
@@ -119,7 +121,7 @@ public class Num implements Comparable<Num> {
     public boolean equals(Object obj) {
         
         if (!(obj instanceof Num)) return false;
-        return compareTo((Num)obj) == 0;
+        return compareTo((Num)obj) == 0 && isPositiveNumber == ((Num)obj).isPositiveNumber;
     }
 
     private int weight(ArrayDeque<Integer> integerOrFractionalPart) {
@@ -137,5 +139,4 @@ public class Num implements Comparable<Num> {
     private int fullWeight() {
         return weight(integerPart) + weight(fractionalPart);
     }
-
 }

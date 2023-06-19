@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 
 
@@ -139,11 +138,4 @@ public class Num implements Comparable<Num> {
         return weight(integerPart) + weight(fractionalPart);
     }
 
-    private String[] reverseArray(String[] source) {
-
-        String[] target = new String[source.length];
-        for (int i = 0, j = source.length - 1; i < source.length; i++, j--)
-            target[i] = source[j];
-        return target;
-    }
 }

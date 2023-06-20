@@ -111,8 +111,8 @@ public class Num implements Comparable<Num> {
 
         return
             (isPositiveNumber ? "" : "-")
-            + (integerPart.isEmpty() ? "0" : integerPart.toString())
-            + (fractionalPart.isEmpty() ? "" : "." + fractionalPart.toString());
+            + (integerPart.isEmpty() ? "0" : integerPart.stream().map(String::valueOf).reduce((x, y) -> x + y).get())
+            + (fractionalPart.isEmpty() ? "" : "." + fractionalPart.stream().map(String::valueOf).reduce((x, y) -> x + y).get());
     }
 
     @Override

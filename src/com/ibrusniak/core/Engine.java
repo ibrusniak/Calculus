@@ -137,14 +137,14 @@ public final class Engine {
     private void div() {}
     private void persent() {}
 
-    private void d0() {}
-    private void d1() {}
-    private void d2() {}
-    private void d3() {}
-    private void d4() {}
-    private void d5() {}
-    private void d6() {}
-    private void d7() {}
-    private void d8() {}
-    private void d9() {}
+    private void d0() {if(buffer.size() < CAPACITY) buffer.addLast(0);}
+    private void d1() {if(buffer.size() < CAPACITY) buffer.addLast(1);}
+    private void d2() {if(buffer.size() < CAPACITY) buffer.addLast(2);}
+    private void d3() {if(buffer.size() < CAPACITY) buffer.addLast(3);}
+    private void d4() {if(buffer.size() < CAPACITY) buffer.addLast(4);}
+    private void d5() {if(buffer.size() < CAPACITY) buffer.addLast(5);}
+    private void d6() {if(buffer.size() < CAPACITY) buffer.addLast(6);}
+    private void d7() {if(buffer.size() < CAPACITY) buffer.addLast(7);}
+    private void d8() {if(buffer.size() < CAPACITY) buffer.addLast(8);}
+    private void d9() {if(buffer.size() < CAPACITY) buffer.addLast(9);}
 }

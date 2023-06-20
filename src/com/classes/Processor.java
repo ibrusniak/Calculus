@@ -4,7 +4,7 @@ public class Processor {
 
     public Num summarize(Num summand1, Num summand2) {
 
-        Num sum = new Num();
+        Num sum = new Num(100);
 
         return sum;
     }

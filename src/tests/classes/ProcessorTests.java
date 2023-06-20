@@ -1,19 +1,22 @@
 package tests.classes;
 
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import com.classes.Num;
 import com.classes.Processor;
 
 public class ProcessorTests {
     
-    Processor processor;
+    Processor processor = new Processor();
 
-    @BeforeAll
-    public void beforeAll() {
+    @Test
+    public void additionTest1() {
 
-        processor = new Processor();
+        Num sum = new Num(100);
+        assertEquals(sum, processor.summarize(new Num(100), new Num(80)));
+        assertEquals(sum, processor.summarize(new Num(-200), new Num(300)));
+        assertEquals(sum, processor.summarize(new Num(), new Num(100)));
     }
-
-    
 }

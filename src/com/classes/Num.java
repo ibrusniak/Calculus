@@ -1,4 +1,4 @@
-package com.ibrusniak;
+package com.classes;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ public class Num implements Comparable<Num> {
 
     public Num(int from) {
 
+        if (from == 0) return;
         if (from == Integer.MIN_VALUE)
             throw new Error("int argument too small!");
         if (from < 0) {
@@ -32,6 +33,7 @@ public class Num implements Comparable<Num> {
     
     public Num(double from) {
 
+        if (from == 0) return;
         if (from == Double.NEGATIVE_INFINITY || from == Double.POSITIVE_INFINITY) {
             throw new Error(String.format("Argument '%s' not allowed!", from));
         }

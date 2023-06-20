@@ -1,4 +1,4 @@
-package com.ibrusniak;
+package com.classes;
 
 public class Utils {
 

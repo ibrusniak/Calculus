@@ -1,6 +1,8 @@
 package tests.classes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.Test;
 import com.classes.Num;
@@ -72,5 +74,31 @@ public class NumTests {
         expected = "-100.00002";
         assertEquals(expected, new Num(-100.00002).toString());
         assertEquals(expected, new Num(-10000002e-5).toString());
+    }
+
+    @Test
+    public void equalsTest1() {
+
+        assertTrue(new Num().equals(new Num()));
+        assertTrue(new Num(0).equals(new Num()));
+        assertTrue(new Num(00).equals(new Num()));
+        assertTrue(new Num(-0).equals(new Num()));
+        assertTrue(new Num(-00).equals(new Num()));
+        assertTrue(new Num(0000).equals(new Num()));
+        assertTrue(new Num(.0).equals(new Num()));
+        assertTrue(new Num(-0).equals(new Num(0)));
+        assertTrue(new Num(.00).equals(new Num()));
+        assertTrue(new Num(-.0).equals(new Num()));
+        assertTrue(new Num(0.0).equals(new Num()));
+        assertTrue(new Num(0.00000).equals(new Num()));
+        assertTrue(new Num(-1).equals(new Num(-1.0)));
+        assertTrue(new Num(-2).equals(new Num(-2.000000)));
+        assertTrue(new Num(-2).equals(new Num(-.0000002e7)));
+    }
+
+    @Test
+    public void equalsTest2() {
+
+        assertFalse(new Num(1).equals(new Num(-1)));
     }
 }

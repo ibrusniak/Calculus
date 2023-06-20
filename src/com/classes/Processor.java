@@ -2,18 +2,31 @@ package com.classes;
 
 public class Processor {
 
-    public Num summarize(Num n1, Num n2) {
-        
-        final Num emptyNum = new Num();
-        
-        if (n1.equals(emptyNum)) return n2;
-        if (n2.equals(emptyNum)) return n1;
+    public Num summarize(Num summand1, Num summand2) {
 
+        Num sum = new Num();
 
-        return new Num(500);
+        return sum;
     }
 
-    private Num summarizeByModule(Num n1, Num n2) {
-        return new Num();
+    public Num substract(Num minuend, Num subtrahend) {
+
+        Num difference = new Num();
+
+        return difference;
+    }
+
+    public Num multiply(Num multiplier, Num multiplicand) {
+
+        Num product = new Num();
+
+        return product;
+    }
+
+    public Num divide(Num dividend, Num divisor) {
+
+        Num quotient = new Num();
+
+        return quotient;
     }
 }

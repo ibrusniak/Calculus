@@ -2,6 +2,7 @@ package com.ibrusniak.core;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -13,6 +14,8 @@ public final class Calculator {
     private ArrayDeque<String> operationalRegister = new ArrayDeque<>(CAPACITY);
     private ArrayDeque<String> memory = new ArrayDeque<>(CAPACITY);
     private boolean negative = false;
+    private boolean screenInputCompleted = false;
+    private Processor processor = new Processor();
 
     private Key operation = null;
 
@@ -161,6 +164,7 @@ public final class Calculator {
      */
     private void keyPressOperationKeys(Key key) {
 
+        screenInputCompleted = true;
         operation = key;
     }
 
@@ -198,7 +202,35 @@ public final class Calculator {
             screen.addLast(".");
     }
 
-    private void result() {}
+    private void result() {
+
+        if (operation == null) {
+
+            operationalRegister.clear();
+            screen.stream().forEach(operationalRegister::add);
+        } else {
+
+            ArrayDeque<String> result = new ArrayDeque<>();
+            if (operation == Key.PLS) {
+                result = processor.makeAddition(screen, operationalRegister);
+            } else if (operation == Key.MNS) {
+                result = processor.makeSubtraction(operationalRegister, screen);
+            } else if (operation == Key.MUL) {
+                result = processor.makeMultiplication(operationalRegister, screen);
+            } else {
+                result = processor.makeDivision(operationalRegister, screen);
+            }
+            
+            if (result.size() > CAPACITY) {
+                screen.clear();
+                screen.addAll(Arrays.stream("ERROR".split("")).toList());
+            } else {
+                screen.clear();
+                result.stream().forEach(screen::add);
+            }
+        }
+        screenInputCompleted = true;
+    }
 
     private void backspace() {
 
@@ -218,6 +250,7 @@ public final class Calculator {
         resetMemory();
         operation = null;
         negative = false;
+        screenInputCompleted = false;
     }
 
     private void negative() {

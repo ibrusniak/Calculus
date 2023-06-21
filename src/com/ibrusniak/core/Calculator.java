@@ -274,8 +274,7 @@ public final class Calculator {
 
     private void memClear() {
 
-        memory.clear();
-        memory.addLast("0");
+        resetMemory();
     }
     
     private void resetScreen() {
@@ -289,8 +288,6 @@ public final class Calculator {
         memory.clear();
         memory.addLast("0");
     }
-
-
 
     private String screenToString() {
 

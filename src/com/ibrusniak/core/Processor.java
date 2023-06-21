@@ -7,9 +7,12 @@ public class Processor {
     public ArrayDeque<String> makeAddition(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
+
+        // TODO: do this!
         result.add("5");
         result.add("0");
         result.add("0");
+        
         ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
         ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
         

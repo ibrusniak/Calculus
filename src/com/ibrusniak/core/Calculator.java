@@ -33,7 +33,7 @@ public final class Calculator {
         
         Collections.addAll(controlKeys,
             Key.DOT, Key.RES, Key.BS, Key.CE,
-            Key.C, Key.NEG, Key.MP, Key.MC, Key.MM, Key.MR);
+            Key.C, Key.NEG, Key.MP, Key.MS, Key.MC, Key.MM, Key.MR);
 
         keyToDigitMap.put(Key.D0, "0");
         keyToDigitMap.put(Key.D1, "1");
@@ -72,6 +72,7 @@ public final class Calculator {
         stringToKeyMap.put("MP", Key.MP);
         stringToKeyMap.put("MM", Key.MM);
         stringToKeyMap.put("MC", Key.MC);
+        stringToKeyMap.put("MS", Key.MS);
         stringToKeyMap.put("MR", Key.MR);
 
         screen.addLast("0");
@@ -82,7 +83,7 @@ public final class Calculator {
         D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
         
         DOT, PLS, MNS, MUL, DIV, PER,
-        RES, BS, CE, C, NEG, MP, MM, MC, MR
+        RES, BS, CE, C, NEG, MP, MM, MC, MS, MR
     }
 
     /**
@@ -109,7 +110,7 @@ public final class Calculator {
      *  digits: "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
      *  operations: "+", "-", "*", "/", "%"
      *  decimal dot: "."
-     *  control keys: "=", "BS", "CE", "C", "+/-", "MP", "MM", "MC", "MR" 
+     *  control keys: "=", "BS", "CE", "C", "+/-", "MP", "MM", "MC", "MR", "MS" 
      * 
      * @throws IllegalArgumentException
      */
@@ -178,10 +179,11 @@ public final class Calculator {
         else if (key == Key.CE) {clearEntry();}
         else if (key == Key.C) {clear();}
         else if (key == Key.NEG) {negative();}
-        else if (key == Key.MP) {memoryplus();}
-        else if (key == Key.MC) {memoryclear();}
-        else if (key == Key.MM) {memoryminus();}
-        else if (key == Key.MR) {mr();}
+        else if (key == Key.MP) {memAdd();}
+        else if (key == Key.MC) {memClear();}
+        else if (key == Key.MM) {memSub();}
+        else if (key == Key.MR) {memRecall();}
+        else if (key == Key.MS) {memStore();}
     }
 
     @Override
@@ -223,18 +225,20 @@ public final class Calculator {
         if (!screenToString().equals("0")) negative = !negative;
     }
 
-    private void memoryplus() {}
+    private void memAdd() {}
 
-    private void memoryclear() {
+    private void memSub() {}
+    
+    private void memRecall() {}
+    
+    private void memStore() {}
+
+    private void memClear() {
 
         memory.clear();
         memory.addLast("0");
     }
-
-    private void memoryminus() {}
-
-    private void mr() {}
-
+    
     private void resetBuffer() {
 
         screen.clear();

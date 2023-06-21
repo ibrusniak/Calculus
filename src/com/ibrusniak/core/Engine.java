@@ -3,18 +3,23 @@ package com.ibrusniak.core;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public final class Engine {
     
     private final int CAPACITY = 40;
 
-    private ArrayDeque<Integer> buffer = new ArrayDeque<>(CAPACITY);
-    private ArrayDeque<Integer> memory = new ArrayDeque<>(CAPACITY);
+    private ArrayDeque<String> buffer = new ArrayDeque<>(CAPACITY);
+    private ArrayDeque<String> memory = new ArrayDeque<>(CAPACITY);
     private boolean negative = false;
+
+    private Key operation = null;
 
     private ArrayList<Key> digitKeys = new ArrayList<>();
     private ArrayList<Key> operationKeys = new ArrayList<>();
     private ArrayList<Key> controlKeys = new ArrayList<>();
+    private HashMap<Key, String> keyToDigitMap = new HashMap<>();
+    private HashMap<String, Key> stringToKeyMap = new HashMap<>();
 
     {
         Collections.addAll(digitKeys,
@@ -28,6 +33,47 @@ public final class Engine {
         Collections.addAll(controlKeys,
             Key.DOT, Key.RES, Key.BS, Key.CE,
             Key.C, Key.NEG, Key.MP, Key.MC, Key.MM, Key.MR);
+
+        keyToDigitMap.put(Key.D0, "0");
+        keyToDigitMap.put(Key.D1, "1");
+        keyToDigitMap.put(Key.D2, "2");
+        keyToDigitMap.put(Key.D3, "3");
+        keyToDigitMap.put(Key.D4, "4");
+        keyToDigitMap.put(Key.D5, "5");
+        keyToDigitMap.put(Key.D6, "6");
+        keyToDigitMap.put(Key.D7, "7");
+        keyToDigitMap.put(Key.D8, "8");
+        keyToDigitMap.put(Key.D9, "9");
+
+        stringToKeyMap.put("0", Key.D0);
+        stringToKeyMap.put("1", Key.D1);
+        stringToKeyMap.put("2", Key.D2);
+        stringToKeyMap.put("3", Key.D3);
+        stringToKeyMap.put("4", Key.D4);
+        stringToKeyMap.put("5", Key.D5);
+        stringToKeyMap.put("6", Key.D6);
+        stringToKeyMap.put("7", Key.D7);
+        stringToKeyMap.put("8", Key.D8);
+        stringToKeyMap.put("9", Key.D9);
+
+        stringToKeyMap.put("DOT", Key.DOT);
+        stringToKeyMap.put("PLS", Key.PLS);
+        stringToKeyMap.put("MNS", Key.MNS);
+        stringToKeyMap.put("MUL", Key.MUL);
+        stringToKeyMap.put("DIV", Key.DIV);
+        stringToKeyMap.put("PER", Key.PER);
+
+        stringToKeyMap.put("RES", Key.RES);
+        stringToKeyMap.put("BS", Key.BS);
+        stringToKeyMap.put("CE", Key.CE);
+        stringToKeyMap.put("C", Key.C);
+        stringToKeyMap.put("NEG", Key.NEG);
+        stringToKeyMap.put("MP", Key.MP);
+        stringToKeyMap.put("MM", Key.MM);
+        stringToKeyMap.put("MC", Key.MC);
+        stringToKeyMap.put("MR", Key.MR);
+
+        buffer.addLast("0");
     }
 
     public enum Key {
@@ -38,14 +84,19 @@ public final class Engine {
         RES, BS, CE, C, NEG, MP, MM, MC, MR
     }
 
-    public void keyPress(Key key) {
+    public void keyPressed(String k) {
+
+        Key key = stringToKeyMap.get(k);
+        if (key == null)
+            throw new IllegalArgumentException(String.format("Illegal argument \"%s\"", k));
+        keyPressed(key);
+    }
+
+    public void keyPressed(Key key) {
 
         if (digitKeys.contains(key)) { keyPressDigitKeys(key); }
         else if (operationKeys.contains(key)) { keyPressOperationKeys(key); }
         else if (controlKeys.contains(key)) { keyPressControlKeys(key); }
-        else {
-            throw new Error(String.format("Wrong key: {%s}!", key));
-        }
     }
 
     /**
@@ -58,18 +109,17 @@ public final class Engine {
      */
     private void keyPressDigitKeys(Key key) {
 
-        if (key == Key.D0) {d0();}
-        else if (key == Key.D1) {d1();}
-        else if (key == Key.D2) {d2();}
-        else if (key == Key.D3) {d3();}
-        else if (key == Key.D4) {d4();}
-        else if (key == Key.D5) {d5();}
-        else if (key == Key.D6) {d6();}
-        else if (key == Key.D7) {d7();}
-        else if (key == Key.D8) {d8();}
-        else if (key == Key.D9) {d9();}
-        else {
-            throw new Error(String.format("Wrong key for function \"keyPressDigitKeys\": {%s}!", key));
+        String digit = keyToDigitMap.get(key);
+
+        switch (digit) {
+
+            case "0":
+                if (!bufferToString().equals("0")) buffer.addLast("0");
+                break;
+            default:
+                if (bufferToString().equals("0")) buffer.removeLast();
+                buffer.addLast(digit);
+                break;
         }
     }
 
@@ -81,14 +131,7 @@ public final class Engine {
      */
     private void keyPressOperationKeys(Key key) {
 
-        if (key == Key.PLS) {plus();}
-        else if (key == Key.MNS) {minus();}
-        else if (key == Key.MUL) {mult();}
-        else if (key == Key.DIV) {div();}
-        else if (key == Key.PER) {persent();}
-        else {
-            throw new Error(String.format("Wrong key for function \"keyPressOperationKeys\": {%s}!", key));
-        }
+        operation = key;
     }
 
     /**
@@ -103,48 +146,86 @@ public final class Engine {
         if (key == Key.DOT) {dot();}
         else if (key == Key.RES) {result();}
         else if (key == Key.BS) {backspace();}
-        else if (key == Key.CE) {cleareverything();}
+        else if (key == Key.CE) {clearEntry();}
         else if (key == Key.C) {clear();}
         else if (key == Key.NEG) {negative();}
         else if (key == Key.MP) {memoryplus();}
         else if (key == Key.MC) {memoryclear();}
         else if (key == Key.MM) {memoryminus();}
         else if (key == Key.MR) {mr();}
-        else {
-            throw new Error(String.format("Wrong key for function \"keyPressControlKeys\": {%s}!", key));
-        }
     }
 
     @Override
     public String toString() {
-        return buffer.toString();
+
+        return bufferToString();
     }
 
-    private void dot() {}
+    private void dot() {
+
+        if(!buffer.contains("."))
+            buffer.addLast(".");
+    }
+
     private void result() {}
+
     private void backspace() {}
-    private void cleareverything() {}
-    private void clear() {}
-    private void negative() {}
+
+    private void clearEntry() {
+
+        resetBuffer();
+        negative = false;
+    }
+
+    private void clear() {
+
+        resetBuffer();
+        resetMemory();
+        operation = null;
+        negative = false;
+    }
+
+    private void negative() {
+        
+        if (!bufferToString().equals("0")) negative = !negative;
+    }
+
     private void memoryplus() {}
-    private void memoryclear() {}
+
+    private void memoryclear() {
+
+        memory.clear();
+        memory.addLast("0");
+    }
+
     private void memoryminus() {}
+
     private void mr() {}
 
     private void plus() {}
+
     private void minus() {}
+
     private void mult() {}
+
     private void div() {}
+
     private void persent() {}
 
-    private void d0() {if(buffer.size() < CAPACITY) buffer.addLast(0);}
-    private void d1() {if(buffer.size() < CAPACITY) buffer.addLast(1);}
-    private void d2() {if(buffer.size() < CAPACITY) buffer.addLast(2);}
-    private void d3() {if(buffer.size() < CAPACITY) buffer.addLast(3);}
-    private void d4() {if(buffer.size() < CAPACITY) buffer.addLast(4);}
-    private void d5() {if(buffer.size() < CAPACITY) buffer.addLast(5);}
-    private void d6() {if(buffer.size() < CAPACITY) buffer.addLast(6);}
-    private void d7() {if(buffer.size() < CAPACITY) buffer.addLast(7);}
-    private void d8() {if(buffer.size() < CAPACITY) buffer.addLast(8);}
-    private void d9() {if(buffer.size() < CAPACITY) buffer.addLast(9);}
+    private void resetBuffer() {
+
+        buffer.clear();
+        buffer.addLast("0");
+    }
+
+    private void resetMemory() {
+
+        memory.clear();
+        memory.addLast("0");
+    }
+
+    private String bufferToString() {
+
+        return (negative ? "-" : "") + buffer.stream().reduce((x, y) -> x + y).get();
+    }
 }

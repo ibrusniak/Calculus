@@ -11,13 +11,26 @@ public class EngineTests {
     Engine engine = new Engine();
 
     @Test
-    public void test1() {
+    public void initialStateTest() {
 
         engine = new Engine();
-        assertEquals("[]",  engine.toString());
-        engine.keyPress(Engine.Key.D1);
-        assertEquals("[1]",  engine.toString());
-        engine.keyPress(Engine.Key.D2);
-        assertEquals("[1, 2]",  engine.toString());
+        assertEquals("0", engine.toString());
+    }
+
+    @Test
+    public void numberInputTest1() {
+
+        engine = new Engine();
+
+        engine.keyPressed("0");
+        engine.keyPressed("0");
+        engine.keyPressed("0");
+        assertEquals("0", engine.toString());
+        engine.keyPressed(Engine.Key.D5);
+        assertEquals("5", engine.toString());
+        engine.keyPressed("2");
+        engine.keyPressed("0");
+        assertEquals("520", engine.toString());
+        // engine.keyPressed();
     }
 }

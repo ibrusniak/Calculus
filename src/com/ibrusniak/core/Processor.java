@@ -4,33 +4,116 @@ import java.util.ArrayDeque;
 
 public class Processor {
     
-    public ArrayDeque<String> makeAddition(ArrayDeque<String> op1, ArrayDeque<String> op2) {
+    public ArrayDeque<String> makeAddition(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+
+        ArrayDeque<String> result = new ArrayDeque<>();
+        result.add("5");
+        result.add("0");
+        result.add("0");
+        ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
+        ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+        
+        prepareBoth(op1, op2);
+
+        return result;
+    }
+
+    public ArrayDeque<String> makeSubtraction(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
     }
 
-    public ArrayDeque<String> makeSubtraction(ArrayDeque<String> op1, ArrayDeque<String> op2) {
+    public ArrayDeque<String> makeMultiplication(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
     }
 
-    public ArrayDeque<String> makeMultiplication(ArrayDeque<String> op1, ArrayDeque<String> op2) {
+    public ArrayDeque<String> makeDivision(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
     }
 
-    public ArrayDeque<String> makeDivision(ArrayDeque<String> op1, ArrayDeque<String> op2) {
+    private ArrayDeque<String> makeModulo(final ArrayDeque<String> operand) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
+        operand.stream()
+            .filter(x -> !x.equals("-"))
+            .forEach(result::add);
         return result;
     }
 
-    private ArrayDeque<String> makeModulo(ArrayDeque<String> op) {
+    /**
+     * Prepare mean arrange both "numbers". Example:
+     * 0.23, 233 -> 000.23, 233.00
+     * 
+     * @param arg1 - ArrayDeque<String>
+     * @param arg2 - ArrayDeque<String>
+     */
+    private void prepareBoth(ArrayDeque<String> arg1, ArrayDeque<String> arg2) {
 
-        ArrayDeque<String> result = new ArrayDeque<>();
-        return result;
+        arg1 = makeModulo(arg1);
+        arg2 = makeModulo(arg2);
+        normalize(arg1);
+        normalize(arg2);
+        widenBoth(arg1, arg2);
+    }
+
+    /**
+     * Transfom "digit sequence": 0 -> 0.0, 0. -> 0.0
+     * 
+     * @param arg - ArrayDeque<String> - the "number"
+     */
+    private void normalize(ArrayDeque<String> arg) {
+
+        if (!arg.contains(".")) {
+            arg.addLast(".");
+            arg.addLast("0");
+            return;
+        }
+        
+        if (arg.getLast().equals(".")) {
+            arg.addLast("0");
+            return;
+        }
+    }
+
+    private void widenBoth(ArrayDeque<String> arg1, ArrayDeque<String> arg2) {
+
+        String arg1String = aDToString(arg1);
+        String arg2String = aDToString(arg2);
+
+        int arg1IntegerPartLength = arg1String.split("\\.")[0].length();
+        int arg2IntegerPartLength = arg2String.split("\\.")[0].length();
+
+        if (arg1IntegerPartLength > arg2IntegerPartLength) {
+            do {
+                arg1.addFirst("0");
+            } while (arg2IntegerPartLength++ < arg1IntegerPartLength);
+        } else if (arg1IntegerPartLength < arg2IntegerPartLength) {
+            do {
+                arg1.addFirst("0");
+            } while (arg1IntegerPartLength++ < arg2IntegerPartLength);
+        }
+
+        int arg1FracPartLength = arg1String.split("\\.")[1].length();
+        int arg2FracPartLength = arg2String.split("\\.")[1].length();
+
+        if (arg1FracPartLength < arg2FracPartLength) {
+            do {
+                arg1.addLast("0");
+            } while (arg1FracPartLength++ < arg2FracPartLength);
+        } else if (arg1FracPartLength > arg2FracPartLength) {
+             do {
+                arg1.addLast("0");
+            } while (arg2FracPartLength++ < arg1FracPartLength);
+       }
+    }
+
+    private String aDToString(ArrayDeque<String> arg) {
+        
+        return arg.stream().reduce((e1, e2) -> e1 + e2).get();
     }
 }

@@ -122,4 +122,13 @@ public class CalculatorTests {
         calculator.input("BS");
         assertEquals("0", calculator.toString());
     }
+
+    @Test
+    public void additionTest1() {
+
+        calculator = new Calculator();
+
+        calculator.input("2 0 0 + 3 0 0 =");
+        assertEquals("500", calculator.toString());
+    }
 }

@@ -144,6 +144,10 @@ public final class Calculator {
 
         String digit = keyToDigitMap.get(key);
 
+        if (screenInputCompleted) {
+            resetScreen();
+            screenInputCompleted = false;
+        }
         switch (digit) {
 
             case "0":
@@ -164,6 +168,8 @@ public final class Calculator {
      */
     private void keyPressOperationKeys(Key key) {
 
+        operationalRegister.clear();
+        screen.stream().forEach(operationalRegister::add);
         screenInputCompleted = true;
         operation = key;
     }
@@ -240,13 +246,13 @@ public final class Calculator {
 
     private void clearEntry() {
 
-        resetBuffer();
+        resetScreen();
         negative = false;
     }
 
     private void clear() {
 
-        resetBuffer();
+        resetScreen();
         resetMemory();
         operation = null;
         negative = false;
@@ -272,7 +278,7 @@ public final class Calculator {
         memory.addLast("0");
     }
     
-    private void resetBuffer() {
+    private void resetScreen() {
 
         screen.clear();
         screen.addLast("0");
@@ -283,6 +289,8 @@ public final class Calculator {
         memory.clear();
         memory.addLast("0");
     }
+
+
 
     private String screenToString() {
 

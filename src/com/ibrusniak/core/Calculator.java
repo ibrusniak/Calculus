@@ -7,9 +7,10 @@ import java.util.HashMap;
 
 public final class Calculator {
     
-    private final int CAPACITY = 40;
+    private final int CAPACITY = 20;
 
-    private ArrayDeque<String> buffer = new ArrayDeque<>(CAPACITY);
+    private ArrayDeque<String> screen = new ArrayDeque<>(CAPACITY);
+    private ArrayDeque<String> operationalRegister = new ArrayDeque<>(CAPACITY);
     private ArrayDeque<String> memory = new ArrayDeque<>(CAPACITY);
     private boolean negative = false;
 
@@ -73,7 +74,7 @@ public final class Calculator {
         stringToKeyMap.put("MC", Key.MC);
         stringToKeyMap.put("MR", Key.MR);
 
-        buffer.addLast("0");
+        screen.addLast("0");
     }
 
     public enum Key {
@@ -85,8 +86,8 @@ public final class Calculator {
     }
 
     /**
-     * Input string of keys, separated by '|' to accelerate development
-     * Example: "CE|1|2|3|+|2|3|="
+     * Input string of keys, separated by ' ' (space) to accelerate development
+     * Example: "CE 1 2 3 + 2 3 ="
      * 
      * 
      * @param input
@@ -95,7 +96,7 @@ public final class Calculator {
      */
     public void input(String input) {
 
-        String[] keys = input.split("\\|");
+        String[] keys = input.split("\\ ");
         for (String key : keys)
             keyPressed(key);
     }
@@ -142,11 +143,11 @@ public final class Calculator {
         switch (digit) {
 
             case "0":
-                if (!bufferToString().equals("0")) buffer.addLast("0");
+                if (!screenToString().equals("0")) screen.addLast("0");
                 break;
             default:
-                if (bufferToString().equals("0")) buffer.removeLast();
-                buffer.addLast(digit);
+                if (screenToString().equals("0")) screen.removeLast();
+                screen.addLast(digit);
                 break;
         }
     }
@@ -186,18 +187,22 @@ public final class Calculator {
     @Override
     public String toString() {
 
-        return bufferToString();
+        return screenToString();
     }
 
     private void dot() {
 
-        if(!buffer.contains("."))
-            buffer.addLast(".");
+        if(!screen.contains("."))
+            screen.addLast(".");
     }
 
     private void result() {}
 
-    private void backspace() {}
+    private void backspace() {
+
+        if (!screenToString().equals("0")) screen.removeLast();
+        if (screen.size() == 0) screen.addFirst("0");
+    }
 
     private void clearEntry() {
 
@@ -215,7 +220,7 @@ public final class Calculator {
 
     private void negative() {
         
-        if (!bufferToString().equals("0")) negative = !negative;
+        if (!screenToString().equals("0")) negative = !negative;
     }
 
     private void memoryplus() {}
@@ -230,20 +235,10 @@ public final class Calculator {
 
     private void mr() {}
 
-    private void plus() {}
-
-    private void minus() {}
-
-    private void mult() {}
-
-    private void div() {}
-
-    private void persent() {}
-
     private void resetBuffer() {
 
-        buffer.clear();
-        buffer.addLast("0");
+        screen.clear();
+        screen.addLast("0");
     }
 
     private void resetMemory() {
@@ -252,8 +247,8 @@ public final class Calculator {
         memory.addLast("0");
     }
 
-    private String bufferToString() {
+    private String screenToString() {
 
-        return (negative ? "-" : "") + buffer.stream().reduce((x, y) -> x + y).get();
+        return (negative ? "-" : "") + screen.stream().reduce((x, y) -> x + y).get();
     }
 }

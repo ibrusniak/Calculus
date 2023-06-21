@@ -98,7 +98,28 @@ public class CalculatorTests {
         calculator.input("C");
         assertEquals("0", calculator.toString());
         
-        calculator.input("CE|C|BS|.|2|3|5|+/-");
+        calculator.input("CE C BS . 2 3 5 +/-");
         assertEquals("-0.235", calculator.toString());
+    }
+    
+    @Test
+    public void backspaceTest1() {
+        
+        calculator = new Calculator();
+        
+        calculator.input("BS BS BS");
+        assertEquals("0", calculator.toString());
+        calculator.input("1 7 8 9");
+        assertEquals("1789", calculator.toString());
+        calculator.input("BS");
+        assertEquals("178", calculator.toString());
+        calculator.input("BS");
+        assertEquals("17", calculator.toString());
+        calculator.input("BS");
+        assertEquals("1", calculator.toString());
+        calculator.input("BS");
+        assertEquals("0", calculator.toString());
+        calculator.input("BS");
+        assertEquals("0", calculator.toString());
     }
 }

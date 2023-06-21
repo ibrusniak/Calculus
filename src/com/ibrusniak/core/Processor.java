@@ -13,6 +13,25 @@ public class Processor {
         
         prepareBoth(op1, op2);
 
+        String op1Digit, op2Digit;
+        while ((op1Digit = op1.pollLast()) != null) {
+
+            if (op1Digit.equals(".")) {
+                result.addFirst(".");
+                op2.pollLast();
+                continue;
+            }
+            op2Digit = op2.pollLast();
+            Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
+            Integer sumAdd = 0;
+            if (sum > 10) {
+                sumAdd += sum - 10;
+                sum = 0;
+            }
+            result.addFirst(String.valueOf(sum));
+            int stop = 1;
+        }
+
         return result;
     }
 

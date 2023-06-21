@@ -56,18 +56,18 @@ public final class Engine {
         stringToKeyMap.put("8", Key.D8);
         stringToKeyMap.put("9", Key.D9);
 
-        stringToKeyMap.put("DOT", Key.DOT);
-        stringToKeyMap.put("PLS", Key.PLS);
-        stringToKeyMap.put("MNS", Key.MNS);
-        stringToKeyMap.put("MUL", Key.MUL);
-        stringToKeyMap.put("DIV", Key.DIV);
-        stringToKeyMap.put("PER", Key.PER);
+        stringToKeyMap.put(".", Key.DOT);
+        stringToKeyMap.put("+", Key.PLS);
+        stringToKeyMap.put("-", Key.MNS);
+        stringToKeyMap.put("*", Key.MUL);
+        stringToKeyMap.put("/", Key.DIV);
+        stringToKeyMap.put("%", Key.PER);
 
-        stringToKeyMap.put("RES", Key.RES);
+        stringToKeyMap.put("=", Key.RES);
         stringToKeyMap.put("BS", Key.BS);
         stringToKeyMap.put("CE", Key.CE);
         stringToKeyMap.put("C", Key.C);
-        stringToKeyMap.put("NEG", Key.NEG);
+        stringToKeyMap.put("+/-", Key.NEG);
         stringToKeyMap.put("MP", Key.MP);
         stringToKeyMap.put("MM", Key.MM);
         stringToKeyMap.put("MC", Key.MC);
@@ -84,6 +84,18 @@ public final class Engine {
         RES, BS, CE, C, NEG, MP, MM, MC, MR
     }
 
+    /**
+     * 
+     * Pressing the calculator's button
+     * 
+     * @param k - String, one of:
+     *  digits: "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+     *  operations: "+", "-", "*", "/", "%"
+     *  decimal dot: "."
+     *  control keys: "=", "BS", "CE", "C", "+/-", "MP", "MM", "MC", "MR" 
+     * 
+     * @throws IllegalArgumentException
+     */
     public void keyPressed(String k) {
 
         Key key = stringToKeyMap.get(k);
@@ -92,7 +104,7 @@ public final class Engine {
         keyPressed(key);
     }
 
-    public void keyPressed(Key key) {
+    private void keyPressed(Key key) {
 
         if (digitKeys.contains(key)) { keyPressDigitKeys(key); }
         else if (operationKeys.contains(key)) { keyPressOperationKeys(key); }

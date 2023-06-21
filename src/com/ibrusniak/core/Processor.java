@@ -8,11 +8,6 @@ public class Processor {
 
         ArrayDeque<String> result = new ArrayDeque<>();
 
-        // TODO: do this!
-        result.add("5");
-        result.add("0");
-        result.add("0");
-        
         ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
         ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
         
@@ -39,13 +34,9 @@ public class Processor {
         return result;
     }
 
-    private ArrayDeque<String> makeModulo(final ArrayDeque<String> operand) {
+    private void makeModulo(final ArrayDeque<String> operand) {
 
-        ArrayDeque<String> result = new ArrayDeque<>();
-        operand.stream()
-            .filter(x -> !x.equals("-"))
-            .forEach(result::add);
-        return result;
+        operand.removeFirstOccurrence("-");
     }
 
     /**
@@ -57,8 +48,8 @@ public class Processor {
      */
     private void prepareBoth(ArrayDeque<String> arg1, ArrayDeque<String> arg2) {
 
-        arg1 = makeModulo(arg1);
-        arg2 = makeModulo(arg2);
+        makeModulo(arg1);
+        makeModulo(arg2);
         normalize(arg1);
         normalize(arg2);
         widenBoth(arg1, arg2);
@@ -112,7 +103,7 @@ public class Processor {
              do {
                 arg1.addLast("0");
             } while (arg2FracPartLength++ < arg1FracPartLength);
-       }
+        }
     }
 
     private String aDToString(ArrayDeque<String> arg) {

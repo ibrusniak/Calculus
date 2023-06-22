@@ -14,6 +14,7 @@ public class Processor {
         prepareBoth(op1, op2);
 
         String op1Digit, op2Digit;
+        Integer sumAdd = 0;
         while ((op1Digit = op1.pollLast()) != null) {
 
             if (op1Digit.equals(".")) {
@@ -23,14 +24,18 @@ public class Processor {
             }
             op2Digit = op2.pollLast();
             Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
-            Integer sumAdd = 0;
+            if (sumAdd > 0) {
+                sum += sumAdd;
+                sumAdd = 0;
+            }
             if (sum > 10) {
-                sumAdd += sum - 10;
-                sum = 0;
+                sumAdd = sum / 10;
+                sum = sum - 10;
             }
             result.addFirst(String.valueOf(sum));
-            int stop = 1;
         }
+        if (sumAdd > 0)
+            result.addFirst(String.valueOf(sumAdd));
 
         removeRedundandDigits(result);
         return result;
@@ -105,11 +110,11 @@ public class Processor {
         if (arg1IntegerPartLength > arg2IntegerPartLength) {
             do {
                 arg1.addFirst("0");
-            } while (arg2IntegerPartLength++ < arg1IntegerPartLength);
+            } while (++arg2IntegerPartLength < arg1IntegerPartLength);
         } else if (arg1IntegerPartLength < arg2IntegerPartLength) {
             do {
                 arg1.addFirst("0");
-            } while (arg1IntegerPartLength++ < arg2IntegerPartLength);
+            } while (++arg1IntegerPartLength < arg2IntegerPartLength);
         }
 
         int arg1FracPartLength = arg1String.split("\\.")[1].length();
@@ -118,11 +123,11 @@ public class Processor {
         if (arg1FracPartLength < arg2FracPartLength) {
             do {
                 arg1.addLast("0");
-            } while (arg1FracPartLength++ < arg2FracPartLength);
+            } while (++arg1FracPartLength < arg2FracPartLength);
         } else if (arg1FracPartLength > arg2FracPartLength) {
              do {
                 arg1.addLast("0");
-            } while (arg2FracPartLength++ < arg1FracPartLength);
+            } while (++arg2FracPartLength < arg1FracPartLength);
         }
     }
 

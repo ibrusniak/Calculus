@@ -130,5 +130,13 @@ public class CalculatorTests {
 
         calculator.input("2 0 0 + 3 0 0 =");
         assertEquals("500", calculator.toString());
+        calculator.input("2 0 9 9 + 3 0 0 =");
+        assertEquals("2399", calculator.toString());
+        calculator.input("2 0 9 9 . 0 0 0 3 + 3 0 0 =");
+        assertEquals("2399.0003", calculator.toString());
+        calculator.input("2 0 9 9 . 0 0 0 3 + 3 0 0 . 3 =");
+        assertEquals("2399.3003", calculator.toString());
+        calculator.input("2 9 2 + 9 8 9 =");
+        assertEquals("1281", calculator.toString());
     }
 }

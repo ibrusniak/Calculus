@@ -1,5 +1,6 @@
 package com.ibrusniak.core;
 
+import java.sql.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,10 +169,27 @@ public final class Calculator {
      */
     private void keyPressOperationKeys(Key key) {
 
-        operationalRegister.clear();
-        screen.stream().forEach(operationalRegister::add);
-        screenInputCompleted = true;
+        if (operation == null) {
+
+            operationalRegister.clear();
+            screen.stream().forEach(operationalRegister::add);
+        } else {
+
+            ArrayDeque<String> result = calculate(screen, operationalRegister);
+            
+            if (result.size() > CAPACITY) {
+                screen.clear();
+                screen.addAll(Arrays.stream("ERROR".split("")).toList());
+            } else {
+                screen.clear();
+                result.stream().forEach(screen::add);
+                operationalRegister.clear();
+                result.stream().forEach(operationalRegister::add);
+            }
+        }   
+        
         operation = key;
+        screenInputCompleted = true;
     }
 
     /**
@@ -216,16 +234,7 @@ public final class Calculator {
             screen.stream().forEach(operationalRegister::add);
         } else {
 
-            ArrayDeque<String> result = new ArrayDeque<>();
-            if (operation == Key.PLS) {
-                result = processor.makeAddition(screen, operationalRegister);
-            } else if (operation == Key.MNS) {
-                result = processor.makeSubtraction(operationalRegister, screen);
-            } else if (operation == Key.MUL) {
-                result = processor.makeMultiplication(operationalRegister, screen);
-            } else {
-                result = processor.makeDivision(operationalRegister, screen);
-            }
+            ArrayDeque<String> result = calculate(screen, operationalRegister);
             
             if (result.size() > CAPACITY) {
                 screen.clear();
@@ -236,6 +245,22 @@ public final class Calculator {
             }
         }
         screenInputCompleted = true;
+    }
+
+    private ArrayDeque<String> calculate(ArrayDeque<String> op1, ArrayDeque<String> op2) {
+
+        ArrayDeque<String> result = new ArrayDeque<String>(CAPACITY);
+        if (operation == Key.PLS) {
+            result = processor.makeAddition(op1, op2);
+        } else if (operation == Key.MNS) {
+            result = processor.makeSubtraction(op2, op1);
+        } else if (operation == Key.MUL) {
+            result = processor.makeMultiplication(op2, op1);
+        } else {
+            result = processor.makeDivision(op2, op1);
+        }
+
+        return result;
     }
 
     private void backspace() {

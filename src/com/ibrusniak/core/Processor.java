@@ -28,7 +28,7 @@ public class Processor {
                 sum += curentStepExcess;
                 curentStepExcess = 0;
             }
-            if (sum > 10) {
+            if (sum >= 10) {
                 curentStepExcess = sum / 10;
                 sum = sum - 10;
             }

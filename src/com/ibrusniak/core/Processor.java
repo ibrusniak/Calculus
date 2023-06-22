@@ -32,6 +32,7 @@ public class Processor {
             int stop = 1;
         }
 
+        removeRedundandDigits(result);
         return result;
     }
 
@@ -128,5 +129,13 @@ public class Processor {
     private String aDToString(ArrayDeque<String> arg) {
         
         return arg.stream().reduce((e1, e2) -> e1 + e2).get();
+    }
+
+    private void removeRedundandDigits(ArrayDeque<String> arg) {
+
+        while(arg.getLast().equals("0"))
+            arg.removeLast();
+        if (arg.getLast().equals("."))
+            arg.removeLast();
     }
 }

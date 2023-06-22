@@ -128,6 +128,13 @@ public class CalculatorTests {
 
         calculator = new Calculator();
 
+
+        calculator.input("2 + 3 =");
+        assertEquals("5", calculator.toString());
+        calculator.input("9 + 3 =");
+        assertEquals("12", calculator.toString());
+        calculator.input("9 9 + 9 9 =");
+        assertEquals("198", calculator.toString());
         calculator.input("2 0 0 + 3 0 0 =");
         assertEquals("500", calculator.toString());
         calculator.input("2 0 9 9 + 3 0 0 =");
@@ -138,5 +145,11 @@ public class CalculatorTests {
         assertEquals("2399.3003", calculator.toString());
         calculator.input("2 9 2 + 9 8 9 =");
         assertEquals("1281", calculator.toString());
+        calculator.input("3 4 9 2 . 0 2 3 + 9 8 9 =");
+        assertEquals("4481.023", calculator.toString());
+        calculator.input("3 4 9 2 . 9 2 3 0 3 + 9 8 9 . 9 9 9 =");
+        assertEquals("4482.92203", calculator.toString());
+        calculator.input("1 0 0 0 + 0 . 0 0 0 0 0 4 =");
+        assertEquals("1000.000004", calculator.toString());
     }
 }

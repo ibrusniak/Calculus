@@ -14,7 +14,7 @@ public class Processor {
         prepareBoth(op1, op2);
 
         String op1Digit, op2Digit;
-        Integer sumAdd = 0;
+        Integer curentStepExcess = 0;
         while ((op1Digit = op1.pollLast()) != null) {
 
             if (op1Digit.equals(".")) {
@@ -24,18 +24,18 @@ public class Processor {
             }
             op2Digit = op2.pollLast();
             Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
-            if (sumAdd > 0) {
-                sum += sumAdd;
-                sumAdd = 0;
+            if (curentStepExcess > 0) {
+                sum += curentStepExcess;
+                curentStepExcess = 0;
             }
             if (sum > 10) {
-                sumAdd = sum / 10;
+                curentStepExcess = sum / 10;
                 sum = sum - 10;
             }
             result.addFirst(String.valueOf(sum));
         }
-        if (sumAdd > 0)
-            result.addFirst(String.valueOf(sumAdd));
+        if (curentStepExcess > 0)
+            result.addFirst(String.valueOf(curentStepExcess));
 
         removeRedundandDigits(result);
         return result;
@@ -109,7 +109,7 @@ public class Processor {
 
         if (arg1IntegerPartLength > arg2IntegerPartLength) {
             do {
-                arg1.addFirst("0");
+                arg2.addFirst("0");
             } while (++arg2IntegerPartLength < arg1IntegerPartLength);
         } else if (arg1IntegerPartLength < arg2IntegerPartLength) {
             do {
@@ -126,7 +126,7 @@ public class Processor {
             } while (++arg1FracPartLength < arg2FracPartLength);
         } else if (arg1FracPartLength > arg2FracPartLength) {
              do {
-                arg1.addLast("0");
+                arg2.addLast("0");
             } while (++arg2FracPartLength < arg1FracPartLength);
         }
     }

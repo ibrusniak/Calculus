@@ -24,7 +24,42 @@ public class ProcessorTests {
 
         Collections.addAll(op1, "2", "3");
         Collections.addAll(op2, "2", "0");
-        assertEquals(1, processor.compare(op2, op1));
+        assertEquals(1, processor.compare(op1, op2));
+        assertEquals(-1, processor.compare(op2, op1));
+    }
+
+    @Test
+    public void compareTest2() {
+
+        op1.clear();
+        op2.clear();
+
+        op1.addLast("-");
+        op1.addLast("0");
+        op2.addLast("0");
+        assertEquals(0, processor.compare(op1, op2));
+
+        op1.clear();
+        op2.clear();
+
+        op1.addLast("-");
+        op1.addLast("1");
+        op2.addLast("0");
         assertEquals(-1, processor.compare(op1, op2));
+
+        op1.clear();
+        op2.clear();
+
+        op1.addLast("5");
+        op2.addLast("6");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        op1.clear();
+        op2.clear();
+
+        op1.addLast("6");
+        op2.addLast("-");
+        op2.addLast("4");
+        assertEquals(1, processor.compare(op1, op2));
     }
 }

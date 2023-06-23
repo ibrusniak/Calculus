@@ -97,9 +97,22 @@ public class Processor {
 
         prepareBoth(op1, op2);
 
-        int weight1 = 0, weight2 = 0;
+        int weight1 = 0, weight2 = 0, counter = 1;
+        String s1 = "", s2 = "";
+        while ((s1 = op1.pollLast()) != null) {
 
-        return 1;
+            s2 = op2.pollLast();
+            if (s1.equals(".")) {
+                continue;
+            }
+            weight1 += Integer.valueOf(s1) * counter;
+            weight2 += Integer.valueOf(s2) * counter;
+            counter++;
+        }
+
+        if (operand1.contains("-")) weight1 *= -1;
+        if (operand2.contains("-")) weight2 *= -1;
+        return Integer.compare(weight1, weight2);
     }
 
     private void makeModulo(final ArrayDeque<String> operand) {

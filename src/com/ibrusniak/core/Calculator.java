@@ -142,6 +142,8 @@ public final class Calculator {
      */
     private void keyPressDigitKeys(Key key) {
 
+        if (toString().equals("ERROR")) return;
+
         String digit = keyToDigitMap.get(key);
 
         if (screenInputCompleted) {
@@ -167,6 +169,8 @@ public final class Calculator {
      * @param key
      */
     private void keyPressOperationKeys(Key key) {
+
+        if (toString().equals("ERROR")) return;
 
         if (operation == null) {
 
@@ -198,6 +202,8 @@ public final class Calculator {
      * @param key
      */
     private void keyPressControlKeys(Key key) {
+
+        if (toString().equals("ERROR") && key != Key.C) return;
 
         if (key == Key.DOT) {dot();}
         else if (key == Key.RES) {result();}
@@ -251,6 +257,7 @@ public final class Calculator {
     private void setErrorState() {
 
         clear();
+        screen.clear();
         screen.addAll(Arrays.stream("ERROR".split("")).toList());
     }
 

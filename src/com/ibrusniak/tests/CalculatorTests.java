@@ -2,6 +2,7 @@ package com.ibrusniak.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.jupiter.api.Test;
 
 import com.ibrusniak.core.Calculator;
@@ -236,5 +237,23 @@ public class CalculatorTests {
 		calculator.input("C");
         calculator.input("2 + 3 + 5 =");
         assertEquals("10", calculator.toString());
+    }
+
+    @Test
+    public void errorStateTest1() {
+
+        calculator = new Calculator();
+
+        calculator.input("9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9");
+        calculator.input("+");
+        calculator.input("9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9");
+        calculator.input("=");
+        assertEquals("ERROR", calculator.toString());
+        calculator.input("5 5 + 1 0 0 =");
+        assertEquals("ERROR", calculator.toString());
+        calculator.input("CE");
+        assertEquals("ERROR", calculator.toString());
+        calculator.input("C");
+        assertEquals("0", calculator.toString());
     }
 }

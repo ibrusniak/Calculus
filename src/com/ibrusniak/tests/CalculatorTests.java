@@ -95,7 +95,9 @@ public class CalculatorTests {
         calculator = new Calculator();
 
         calculator.input(".");
-        calculator.input("C");
+        
+		calculator.input("C");
+
         assertEquals("0", calculator.toString());
         
         calculator.input("CE C BS . 2 3 5 +/-");
@@ -130,24 +132,54 @@ public class CalculatorTests {
 
         calculator.input("2 + 3 =");
         assertEquals("5", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("9 + 3 =");
         assertEquals("12", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("9 9 + 9 9 =");
         assertEquals("198", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("2 0 0 + 3 0 0 =");
         assertEquals("500", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("2 0 9 9 + 3 0 0 =");
         assertEquals("2399", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("2 0 9 9 . 0 0 0 3 + 3 0 0 =");
         assertEquals("2399.0003", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("2 0 9 9 . 0 0 0 3 + 3 0 0 . 3 =");
         assertEquals("2399.3003", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("2 9 2 + 9 8 9 =");
         assertEquals("1281", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("3 4 9 2 . 0 2 3 + 9 8 9 =");
         assertEquals("4481.023", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("3 4 9 2 . 9 2 3 0 3 + 9 8 9 . 9 9 9 =");
         assertEquals("4482.92203", calculator.toString());
+        
+		calculator.input("C");
+
         calculator.input("1 0 0 0 + 0 . 0 0 0 0 0 4 =");
         assertEquals("1000.000004", calculator.toString());
     }
@@ -160,19 +192,29 @@ public class CalculatorTests {
         calculator.input("5 +");
         assertEquals("5", calculator.toString());
         
-        calculator.input("C");
+		calculator.input("C");
         
         calculator.input("5 + 6 =");
         assertEquals("11", calculator.toString());
         
-        calculator.input("C");
+		calculator.input("C");
         
         calculator.input("5 + 6 +");
         assertEquals("11", calculator.toString());
         
-        calculator.input("C");
+		calculator.input("C");
 
         calculator.input("5 + 6 + 9 +");
         assertEquals("20", calculator.toString());
+        
+		calculator.input("C");
+
+        calculator.input("3 2 + 1 9 + 4 1 =");
+        assertEquals("92", calculator.toString());
+        
+		calculator.input("C");
+
+        calculator.input("2 + 3 + 5 =");
+        assertEquals("10", calculator.toString());
     }
 }

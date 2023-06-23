@@ -1,6 +1,5 @@
 package com.ibrusniak.core;
 
-import java.sql.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,8 +177,7 @@ public final class Calculator {
             ArrayDeque<String> result = calculate(screen, operationalRegister);
             
             if (result.size() > CAPACITY) {
-                screen.clear();
-                screen.addAll(Arrays.stream("ERROR".split("")).toList());
+                setErrorState();
             } else {
                 screen.clear();
                 result.stream().forEach(screen::add);
@@ -222,6 +220,10 @@ public final class Calculator {
 
     private void dot() {
 
+        if (screenInputCompleted) {
+            resetScreen();
+            screenInputCompleted = false;
+        }
         if(!screen.contains("."))
             screen.addLast(".");
     }
@@ -237,14 +239,19 @@ public final class Calculator {
             ArrayDeque<String> result = calculate(screen, operationalRegister);
             
             if (result.size() > CAPACITY) {
-                screen.clear();
-                screen.addAll(Arrays.stream("ERROR".split("")).toList());
+                setErrorState();
             } else {
                 screen.clear();
                 result.stream().forEach(screen::add);
             }
         }
         screenInputCompleted = true;
+    }
+
+    private void setErrorState() {
+
+        clear();
+        screen.addAll(Arrays.stream("ERROR".split("")).toList());
     }
 
     private ArrayDeque<String> calculate(ArrayDeque<String> op1, ArrayDeque<String> op2) {
@@ -280,8 +287,9 @@ public final class Calculator {
         resetScreen();
         resetMemory();
         operation = null;
+        operationalRegister.clear();
+        screenInputCompleted = true;
         negative = false;
-        screenInputCompleted = false;
     }
 
     private void negative() {

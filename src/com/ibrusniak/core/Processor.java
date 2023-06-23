@@ -44,6 +44,37 @@ public class Processor {
     public ArrayDeque<String> makeSubtraction(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
+
+        // ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
+        // ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+        
+        // prepareBoth(op1, op2);
+
+        // String op1Digit, op2Digit;
+        // Integer curentScarcity = 0;
+        // while ((op1Digit = op1.pollLast()) != null) {
+
+        //     if (op1Digit.equals(".")) {
+        //         result.addFirst(".");
+        //         op2.pollLast();
+        //         continue;
+        //     }
+        //     op2Digit = op2.pollLast();
+        //     Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
+        //     if (curentScarcity > 0) {
+        //         sum += curentScarcity;
+        //         curentScarcity = 0;
+        //     }
+        //     if (sum >= 10) {
+        //         curentScarcity = sum / 10;
+        //         sum = sum - 10;
+        //     }
+        //     result.addFirst(String.valueOf(sum));
+        // }
+        // if (curentScarcity > 0)
+        //     result.addFirst(String.valueOf(curentScarcity));
+
+        // removeRedundandDigits(result);
         return result;
     }
 
@@ -57,6 +88,18 @@ public class Processor {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
+    }
+
+    public int compare(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+
+        ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
+        ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+
+        prepareBoth(op1, op2);
+
+        int weight1 = 0, weight2 = 0;
+
+        return 1;
     }
 
     private void makeModulo(final ArrayDeque<String> operand) {

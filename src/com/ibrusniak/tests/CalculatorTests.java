@@ -256,4 +256,6 @@ public class CalculatorTests {
         calculator.input("C");
         assertEquals("0", calculator.toString());
     }
+
+    
 }

@@ -36,18 +36,41 @@ import java.util.Arrays;
  */
 public class Processor {
 
+    /**
+     * Transfom "number": 0 -> 0.0, 0. -> 0.0, .0 -> 0.0
+     * -0 -> -0.0, -0. -> -0.0, -.0 -> 0.0
+     * 
+     * @param number - ArrayDeque<String> - the "number"
+     */
+    public ArrayDeque<String> normalize(ArrayDeque<String> number) {
 
-    public int compare(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
+        ArrayDeque<String> result = new ArrayDeque<>();
+        if (number.isEmpty() || number.stream().filter(a -> !a.equals("+") && !a.equals("-") && !a.equals(".")).allMatch(a->a.equals("0"))) {
+            result.add("0");
+            result.add(".");
+            result.add("0");
+            return result;
+        }
 
-        ArrayDeque<String> o1 = new ArrayDeque<>(operand1);
-        ArrayDeque<String> o2 = new ArrayDeque<>(operand2);
+        result = new ArrayDeque<>(number);
+        result.removeFirstOccurrence("-");
+        result.removeFirstOccurrence("+");
+        
+        while (result.getFirst().equals("0")) result.removeFirst();
+        if (!result.contains(".")) result.addLast(".");
+        while (result.getLast().equals("0")) result.removeLast();
+        
+        if (result.getFirst().equals(".")) result.addFirst("0");
+        if (result.getLast().equals(".")) result.addLast("0");
+
+        if (number.contains("-")) result.addFirst("-");
+        return result;
     }
-
 
     /**
      * Check if number is valid sequence
      * valid numbers:
-     *      '0', '2', '34'? '1', '8', '10', '-1'
+     *      '0', '2', '34' '1', '8', '10', '-1'
      *      '0.1', '-0.1', '-2.884', '114.411554',
      *      '0.0000045', '-444.00001', '-0.001',
      *      '-44', '256.654'
@@ -63,7 +86,6 @@ public class Processor {
     public boolean isValidNumber(ArrayDeque<String> number) {
 
         String stringRepresentation = number.stream().reduce((a, b) -> a + b).get();
-
         String regexp = "^((-?(((0\\.|[1-9]+0*\\.)[1-9]*0*[1-9]+)|([1-9]+0*[1-9]*)))|(0))$";
         if (stringRepresentation != null &&
             stringRepresentation.matches(regexp)) return true;

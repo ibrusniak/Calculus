@@ -1,5 +1,6 @@
 package com.ibrusniak.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -128,9 +129,133 @@ public class ProcessorTests {
         assertFalse(processor.isValidNumber(op1));
         
     }
-    
+
+    @Test
+    public void normalizeTest1() {
+
+        op1 = new ArrayDeque<>();
+        String normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "0.");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "0.0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "0.000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "000.000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "-0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "-000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "-0.");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "-0.0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "-0.000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "+0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "+0.0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "+.0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+
+        refillFromString(op1, "+00.0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+    }
+
+    @Test
+    public void normalizeTest2() {
+
+        refillFromString(op1, "5");
+        String normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("5.0", normalized);
+
+        refillFromString(op1, "-5");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-5.0", normalized);
+
+        refillFromString(op1, "5.0000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("5.0", normalized);
+
+        refillFromString(op1, "00005.0000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("5.0", normalized);
+
+        refillFromString(op1, "-050.0002000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-50.0002", normalized);
+
+        refillFromString(op1, "-.005000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-0.005", normalized);
+
+        refillFromString(op1, "500");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("500.0", normalized);
+
+        refillFromString(op1, "-5050");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-5050.0", normalized);
+
+        refillFromString(op1, "00005000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("5000.0", normalized);
+
+        refillFromString(op1, "-0005.0010000");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-5.001", normalized);
+
+        refillFromString(op1, "-0.0005");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("-0.0005", normalized);
+
+        refillFromString(op1, "0");
+        normalized = arrayDequeToString(processor.normalize(op1));
+        assertEquals("0.0", normalized);
+    }
+
     private void refillFromString(ArrayDeque<String> op, String str) {
         op.clear();
         Arrays.stream(str.split("")).forEach(op::add);
+    }
+
+    private String arrayDequeToString(ArrayDeque<String> op) {
+        return op.stream().reduce((a, b) -> a + b).get();
     }
 }

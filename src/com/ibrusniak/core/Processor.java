@@ -5,7 +5,7 @@ import java.util.ArrayDeque;
 /**
  * Processor. Operates with "numbers"
  * 
- * Addition: Augend + Addend = Sum.
+ * Addition: augend + addend = Sum.
  * Subtraction: Minuend - Subtrahend = Difference.
  * Multiplication: Multiplicand × Multiplier = Product. Generally, operands are called factors.
  * Division: Dividend ÷ Divisor = Quotient.
@@ -29,12 +29,26 @@ import java.util.ArrayDeque;
  */
 public class Processor {
     
-    public ArrayDeque<String> makeAddition(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+    /**
+     * 
+     * Addition: augend + addend = sum.
+     * 
+     * Rules:
+     * 1. a + b = a + b
+     * 2. a + (-b) = a - b
+     * 3. (-a) + b = b - a
+     * 4. (-a) + (-b) = -(a + b)
+     * 
+     * @param augend - ArrayDeque<String>
+     * @param addend - ArrayDeque<String>
+     * @return ArrayDeque<String>
+     */
+    public ArrayDeque<String> makeAddition(ArrayDeque<String> augend, ArrayDeque<String> addend) {
 
-        ArrayDeque<String> result = new ArrayDeque<>();
+        ArrayDeque<String> sum = new ArrayDeque<>();
 
-        ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
-        ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+        ArrayDeque<String> op1 = new ArrayDeque<>(augend);
+        ArrayDeque<String> op2 = new ArrayDeque<>(addend);
         
         prepareBoth(op1, op2);
 
@@ -43,92 +57,58 @@ public class Processor {
         while ((op1Digit = op1.pollLast()) != null) {
 
             if (op1Digit.equals(".")) {
-                result.addFirst(".");
+                sum.addFirst(".");
                 op2.pollLast();
                 continue;
             }
             op2Digit = op2.pollLast();
-            Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
+            Integer digitSum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
             if (curentStepExcess > 0) {
-                sum += curentStepExcess;
+                digitSum += curentStepExcess;
                 curentStepExcess = 0;
             }
-            if (sum >= 10) {
-                curentStepExcess = sum / 10;
-                sum = sum - 10;
+            if (digitSum >= 10) {
+                curentStepExcess = digitSum / 10;
+                digitSum = digitSum - 10;
             }
-            result.addFirst(String.valueOf(sum));
+            sum.addFirst(String.valueOf(digitSum));
         }
         if (curentStepExcess > 0)
-            result.addFirst(String.valueOf(curentStepExcess));
+            sum.addFirst(String.valueOf(curentStepExcess));
 
-        removeRedundandDigits(result);
-        return result;
+        removeRedundandDigits(sum);
+        return sum;
     }
 
     /**
-     * Subtraction: Minuend - Subtrahend = Difference.
+     *  1. a - b = a - b
+     *  2. a - (-b) = a + b
+     *  3. (-a) - (-b) = -a + b
+     *  4. (-a) - b = -(a + b)
      * 
-     * @param minuend - final ArrayDeque<String> - minuend
-     * @param subtrahend - final ArrayDeque<String> - subtrahend
-     * @return ArrayDeque<String> - difference
+     * @param minuend
+     * @param subtrahend
+     * @return
      */
-    public ArrayDeque<String> makeSubtraction(final ArrayDeque<String> minuend, final ArrayDeque<String> subtrahend) {
+    public ArrayDeque<String> makeSubtraction(ArrayDeque<String> minuend, ArrayDeque<String> subtrahend) {
 
         ArrayDeque<String> difference = new ArrayDeque<>();
-
-        ArrayDeque<String> op1 = new ArrayDeque<>(minuend);
-        ArrayDeque<String> op2 = new ArrayDeque<>(subtrahend);
-        
-        ArrayDeque<String> zero = zeroNum();
-        
-        if ((compare(op1, zero) > 0) && (compare(op2, zero) > 0))
-        
-
-
-        prepareBoth(op1, op2);
-
-        String op1Digit, op2Digit;
-        Integer curentScarcity = 0;
-        while ((op1Digit = op1.pollLast()) != null) {
-
-        //     if (op1Digit.equals(".")) {
-        //         result.addFirst(".");
-        //         op2.pollLast();
-        //         continue;
-        //     }
-        //     op2Digit = op2.pollLast();
-        //     Integer sum = Integer.valueOf(op1Digit) + Integer.valueOf(op2Digit);
-        //     if (curentScarcity > 0) {
-        //         sum += curentScarcity;
-        //         curentScarcity = 0;
-        //     }
-        //     if (sum >= 10) {
-        //         curentScarcity = sum / 10;
-        //         sum = sum - 10;
-        //     }
-        //     result.addFirst(String.valueOf(sum));
-        }
-        // if (curentScarcity > 0)
-        //     result.addFirst(String.valueOf(curentScarcity));
-
-        removeRedundandDigits(difference);
         return difference;
     }
 
-    public ArrayDeque<String> makeMultiplication(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+    public ArrayDeque<String> makeMultiplication(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
     }
 
-    public ArrayDeque<String> makeDivision(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+    public ArrayDeque<String> makeDivision(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         return result;
     }
 
-    public int compare(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+    public int compare(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
 
         ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
         ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
@@ -153,11 +133,6 @@ public class Processor {
         return Integer.compare(weight1, weight2);
     }
 
-    private void makeModulo(final ArrayDeque<String> operand) {
-
-        operand.removeFirstOccurrence("-");
-    }
-
     /**
      * Prepare mean arrange both "numbers". Example:
      * 0.23, 233 -> 000.23, 233.00
@@ -171,7 +146,11 @@ public class Processor {
         makeModulo(arg2);
         normalize(arg1);
         normalize(arg2);
-        widenBoth(arg1, arg2);
+        widenNumbers(arg1, arg2);
+    }
+
+    private void makeModulo(ArrayDeque<String> operand) {
+        operand.removeFirstOccurrence("-");
     }
 
     /**
@@ -193,10 +172,10 @@ public class Processor {
         }
     }
 
-    private void widenBoth(ArrayDeque<String> arg1, ArrayDeque<String> arg2) {
+    private void widenNumbers(ArrayDeque<String> arg1, ArrayDeque<String> arg2) {
 
-        String arg1String = aDToString(arg1);
-        String arg2String = aDToString(arg2);
+        String arg1String = numToString(arg1);
+        String arg2String = numToString(arg2);
 
         int arg1IntegerPartLength = arg1String.split("\\.")[0].length();
         int arg2IntegerPartLength = arg2String.split("\\.")[0].length();
@@ -225,8 +204,7 @@ public class Processor {
         }
     }
 
-    private String aDToString(ArrayDeque<String> arg) {
-        
+    private String numToString(ArrayDeque<String> arg) {
         return arg.stream().reduce((e1, e2) -> e1 + e2).get();
     }
 
@@ -238,7 +216,7 @@ public class Processor {
             arg.removeLast();
     }
 
-    private ArrayDeque<String> zeroNum() {
+    private ArrayDeque<String> zero() {
 
         ArrayDeque<String> result = new ArrayDeque<>();
         result.addLast("0");
@@ -246,7 +224,6 @@ public class Processor {
     }
 
     private boolean negative(ArrayDeque<String> arg) {
-
-        return (compare(arg, zeroNum()) == -1);
+        return (compare(arg, zero()) == -1);
     }
 }

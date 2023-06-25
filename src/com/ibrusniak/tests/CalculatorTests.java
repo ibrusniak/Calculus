@@ -2,7 +2,6 @@ package com.ibrusniak.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.jupiter.api.Test;
 
 import com.ibrusniak.core.Calculator;

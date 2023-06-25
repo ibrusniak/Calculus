@@ -1,8 +1,10 @@
 package com.ibrusniak.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -16,59 +18,121 @@ public class ProcessorTests {
     ArrayDeque<String> op1 = new ArrayDeque<>();
     ArrayDeque<String> op2 = new ArrayDeque<>();
 
+    /*
+     * valid numbers:
+     * 
+     *      '0', '2', '34'? '1', '8', '10', '-1'
+     *      '0.1', '-0.1', '-2.884', '114.411554',
+     *      '0.0000045', '-444.00001', '-0.001',
+     *      '-44', '256.654'
+     * 
+     */
     @Test
-    public void compareTest1() {
+    public void isValidNumberTest1() {
 
-        op1.clear();
-        op2.clear();
+        refillFromString(op1, "0");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "2");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "34");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "1");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "8");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "10");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "-1");
+        assertTrue(processor.isValidNumber(op1));
 
-        Collections.addAll(op1, "2", "3");
-        Collections.addAll(op2, "2", "0");
-        assertEquals(1, processor.compare(op1, op2));
-        assertEquals(-1, processor.compare(op2, op1));
+        refillFromString(op1, "0.1");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "-0.1");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "-2.884");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "114.411554");
+        assertTrue(processor.isValidNumber(op1))
+        ;
+        refillFromString(op1, "0.0000045");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "-444.00001");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "-0.001");
+        assertTrue(processor.isValidNumber(op1));
+
+        refillFromString(op1, "-44");
+        assertTrue(processor.isValidNumber(op1));
+        refillFromString(op1, "256.654");
+        assertTrue(processor.isValidNumber(op1));
+
     }
 
+    /*
+     * invalid numbers:
+     * 
+     *      '1.0', '--2.2', '2.33-', '02344', '00',
+     *      '00001.223', '259.', '0.', '-1.0000',
+     *      '-44.', '0.000', '-0.00', '00.1', '+0',
+     *      '++2', '-0', '0.0', '01', '-01',
+     *      '+2', '+34'
+     * 
+     */
     @Test
-    public void compareTest2() {
+    public void isValidNumberTest2() {
 
-        op1.clear();
-        op2.clear();
+        refillFromString(op1, "1.0");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "--2.2");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "2.33-");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "02344");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "00");
+        assertFalse(processor.isValidNumber(op1));
 
-        op1.addLast("-");
-        op1.addLast("0");
-        op2.addLast("0");
-        assertEquals(0, processor.compare(op1, op2));
+        refillFromString(op1, "00001.223");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "259.");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "0.");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "-1.0000");
+        assertFalse(processor.isValidNumber(op1));
 
-        op1.clear();
-        op2.clear();
+        refillFromString(op1, "-44.");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "0.000");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "-0.00");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "00.1");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "+0");
+        assertFalse(processor.isValidNumber(op1));
 
-        op1.addLast("-");
-        op1.addLast("1");
-        op2.addLast("0");
-        assertEquals(-1, processor.compare(op1, op2));
+        refillFromString(op1, "++2");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "-0");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "0.0");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "01");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "-01");
+        assertFalse(processor.isValidNumber(op1));
 
-        op1.clear();
-        op2.clear();
+        refillFromString(op1, "+2");
+        assertFalse(processor.isValidNumber(op1));
+        refillFromString(op1, "+34");
+        assertFalse(processor.isValidNumber(op1));
+        
+    }
+    
+    public void refillFromString(ArrayDeque<String> op, String str) {
 
-        op1.addLast("5");
-        op2.addLast("6");
-        assertEquals(-1, processor.compare(op1, op2));
-
-        op1.clear();
-        op2.clear();
-
-        op1.addLast("6");
-        op2.addLast("-");
-        op2.addLast("4");
-        assertEquals(1, processor.compare(op1, op2));
-
-        op1.clear();
-        op2.clear();
-
-        op1.addLast("-");
-        op1.addLast("6");
-        op2.addLast("-");
-        op2.addLast("4");
-        assertEquals(-1, processor.compare(op1, op2));
+        op.clear();
+        Arrays.stream(str.split("")).forEach(op::add);
     }
 }

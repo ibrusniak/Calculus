@@ -47,6 +47,28 @@ public class Processor {
 
         ArrayDeque<String> sum = new ArrayDeque<>();
 
+        // Rule 1
+        if (!negative(addend) && !negative(addend)) sum = makeModuloAddition(augend, addend);
+
+        // Rule 2
+        if (!negative(augend) && negative(addend)) sum = makeSubtraction(augend, addend);
+
+        // Rule 3
+        if (negative(augend) && !negative(addend)) sum = makeSubtraction(addend, augend);
+
+        // Rule 4
+        if (negative(augend) && negative(addend)) {
+            sum = makeModuloAddition(addend, augend);
+            sum.addFirst("-");
+        }
+
+        return sum;
+    }
+
+    private ArrayDeque<String> makeModuloAddition(ArrayDeque<String> augend, ArrayDeque<String> addend) {
+
+        ArrayDeque<String> sum = new ArrayDeque<>();
+
         ArrayDeque<String> op1 = new ArrayDeque<>(augend);
         ArrayDeque<String> op2 = new ArrayDeque<>(addend);
         

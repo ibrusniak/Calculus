@@ -2,6 +2,31 @@ package com.ibrusniak.core;
 
 import java.util.ArrayDeque;
 
+/**
+ * Processor. Operates with "numbers"
+ * 
+ * Addition: Augend + Addend = Sum.
+ * Subtraction: Minuend - Subtrahend = Difference.
+ * Multiplication: Multiplicand × Multiplier = Product. Generally, operands are called factors.
+ * Division: Dividend ÷ Divisor = Quotient.
+ * 
+ * Modulation: Dividend % Divisor = Remainder.
+ * Exponentiation: Base ^ Exponent = ___.
+ * Finding roots: Degree √ Radicand = Root.
+ * 
+ * Rules of the arithmetic:
+ * Addition:
+ *  a + b = a + b
+ *  a + (-b) = a - b
+ *  (-a) + b = b - a
+ *  (-a) + (-b) = -(a + b)
+ * Substraction:
+ *  a - b = a - b
+ *  a - (-b) = a + b
+ *  (-a) - (-b) = -a + b
+ *  (-a) - b = -(a + b)
+ * 
+ */
 public class Processor {
     
     public ArrayDeque<String> makeAddition(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
@@ -41,18 +66,31 @@ public class Processor {
         return result;
     }
 
-    public ArrayDeque<String> makeSubtraction(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
+    /**
+     * Subtraction: Minuend - Subtrahend = Difference.
+     * 
+     * @param minuend - final ArrayDeque<String> - minuend
+     * @param subtrahend - final ArrayDeque<String> - subtrahend
+     * @return ArrayDeque<String> - difference
+     */
+    public ArrayDeque<String> makeSubtraction(final ArrayDeque<String> minuend, final ArrayDeque<String> subtrahend) {
 
-        ArrayDeque<String> result = new ArrayDeque<>();
+        ArrayDeque<String> difference = new ArrayDeque<>();
 
-        // ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
-        // ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+        ArrayDeque<String> op1 = new ArrayDeque<>(minuend);
+        ArrayDeque<String> op2 = new ArrayDeque<>(subtrahend);
         
-        // prepareBoth(op1, op2);
+        ArrayDeque<String> zero = zeroNum();
+        
+        if ((compare(op1, zero) > 0) && (compare(op2, zero) > 0))
+        
 
-        // String op1Digit, op2Digit;
-        // Integer curentScarcity = 0;
-        // while ((op1Digit = op1.pollLast()) != null) {
+
+        prepareBoth(op1, op2);
+
+        String op1Digit, op2Digit;
+        Integer curentScarcity = 0;
+        while ((op1Digit = op1.pollLast()) != null) {
 
         //     if (op1Digit.equals(".")) {
         //         result.addFirst(".");
@@ -70,12 +108,12 @@ public class Processor {
         //         sum = sum - 10;
         //     }
         //     result.addFirst(String.valueOf(sum));
-        // }
+        }
         // if (curentScarcity > 0)
         //     result.addFirst(String.valueOf(curentScarcity));
 
-        // removeRedundandDigits(result);
-        return result;
+        removeRedundandDigits(difference);
+        return difference;
     }
 
     public ArrayDeque<String> makeMultiplication(final ArrayDeque<String> operand1, final ArrayDeque<String> operand2) {
@@ -198,5 +236,17 @@ public class Processor {
             arg.removeLast();
         if (arg.getLast().equals("."))
             arg.removeLast();
+    }
+
+    private ArrayDeque<String> zeroNum() {
+
+        ArrayDeque<String> result = new ArrayDeque<>();
+        result.addLast("0");
+        return result;
+    }
+
+    private boolean negative(ArrayDeque<String> arg) {
+
+        return (compare(arg, zeroNum()) == -1);
     }
 }

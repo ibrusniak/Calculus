@@ -61,5 +61,14 @@ public class ProcessorTests {
         op2.addLast("-");
         op2.addLast("4");
         assertEquals(1, processor.compare(op1, op2));
+
+        op1.clear();
+        op2.clear();
+
+        op1.addLast("-");
+        op1.addLast("6");
+        op2.addLast("-");
+        op2.addLast("4");
+        assertEquals(-1, processor.compare(op1, op2));
     }
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Test;
 
@@ -52,8 +51,8 @@ public class ProcessorTests {
         refillFromString(op1, "-2.884");
         assertTrue(processor.isValidNumber(op1));
         refillFromString(op1, "114.411554");
-        assertTrue(processor.isValidNumber(op1))
-        ;
+        assertTrue(processor.isValidNumber(op1));
+        
         refillFromString(op1, "0.0000045");
         assertTrue(processor.isValidNumber(op1));
         refillFromString(op1, "-444.00001");
@@ -130,8 +129,7 @@ public class ProcessorTests {
         
     }
     
-    public void refillFromString(ArrayDeque<String> op, String str) {
-
+    private void refillFromString(ArrayDeque<String> op, String str) {
         op.clear();
         Arrays.stream(str.split("")).forEach(op::add);
     }

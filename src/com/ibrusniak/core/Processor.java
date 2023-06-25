@@ -36,17 +36,22 @@ import java.util.Arrays;
  */
 public class Processor {
 
+
+    public int compare(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
+
+        ArrayDeque<String> o1 = new ArrayDeque<>(operand1);
+        ArrayDeque<String> o2 = new ArrayDeque<>(operand2);
+    }
+
+
     /**
      * Check if number is valid sequence
      * valid numbers:
-     * 
      *      '0', '2', '34'? '1', '8', '10', '-1'
      *      '0.1', '-0.1', '-2.884', '114.411554',
      *      '0.0000045', '-444.00001', '-0.001',
      *      '-44', '256.654'
-     * 
      * invalid numbers:
-     * 
      *      '1.0', '--2.2', '2.33-', '02344', '00',
      *      '00001.223', '259.', '0.', '-1.0000',
      *      '-44.', '0.000', '-0.00', '00.1', '+0',

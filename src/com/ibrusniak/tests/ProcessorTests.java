@@ -285,7 +285,7 @@ public class ProcessorTests {
     }
 
     @Test
-    public void compareTest1Equalss() {
+    public void compareTestEqualss() {
 
         op1.clear();
         op2.clear();
@@ -322,6 +322,86 @@ public class ProcessorTests {
         refillFromString(op1, "0");
         refillFromString(op2, "-0");
         assertEquals(0, processor.compare(op1, op2));
+    }
+
+    @Test
+    public void compareTestGraterFirst() {
+
+        refillFromString(op1, "5");
+        refillFromString(op2, "1");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "5");
+        refillFromString(op2, "0");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "5");
+        refillFromString(op2, "-1");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "-1");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "5");
+        refillFromString(op2, "-599");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "0.001");
+        refillFromString(op2, "0.0005");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "559.11111100095");
+        refillFromString(op2, "559.1111110009");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-1");
+        refillFromString(op2, "-500");
+        assertEquals(1, processor.compare(op1, op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "-9");
+        assertEquals(1, processor.compare(op1, op2));
+    }
+
+    @Test
+    public void compareTestGraterLast() {
+
+        refillFromString(op1, "1");
+        refillFromString(op2, "5");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "5");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-1");
+        refillFromString(op2, "5");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-1");
+        refillFromString(op2, "0");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-599");
+        refillFromString(op2, "5");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "0.0005");
+        refillFromString(op2, "0.001");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "559.1111110009");
+        refillFromString(op2, "559.11111100095");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-500");
+        refillFromString(op2, "-1");
+        assertEquals(-1, processor.compare(op1, op2));
+
+        refillFromString(op1, "-9");
+        refillFromString(op2, "0");
+        assertEquals(-1, processor.compare(op1, op2));
     }
 
     private void refillFromString(ArrayDeque<String> op, String str) {

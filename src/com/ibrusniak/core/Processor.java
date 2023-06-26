@@ -36,6 +36,28 @@ import java.util.Arrays;
  */
 public class Processor {
 
+    public int compare(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
+
+        ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
+        ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+
+        widenNumbers(op1, op2);
+
+        String nextOp1 = "", nextOp2 = "";
+        while ((nextOp1 = op1.pollFirst()) != null) {
+
+            nextOp2 = op2.pollFirst();
+            if (nextOp1.equals(".")) continue;
+            if (Integer.valueOf(nextOp1) > Integer.valueOf(nextOp2)) {
+                return 1;
+            } else if (Integer.valueOf(nextOp1) < Integer.valueOf(nextOp2)) {
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
     public void widenNumbers(ArrayDeque<String> argument1, ArrayDeque<String> argument2) {
 
         ArrayDeque<String> arg1 = normalize(argument1);
@@ -91,17 +113,20 @@ public class Processor {
      */
     public ArrayDeque<String> normalize(ArrayDeque<String> number) {
 
-        ArrayDeque<String> result = new ArrayDeque<>();
-        if (number.isEmpty() || number.stream().filter(a -> !a.equals("+") && !a.equals("-") && !a.equals(".")).allMatch(a->a.equals("0"))) {
+        // ArrayDeque<String> result = new ArrayDeque<>();
+        ArrayDeque<String> result = new ArrayDeque<>(number);
+
+        // result = new ArrayDeque<>(number);
+        result.removeFirstOccurrence("-");
+        result.removeFirstOccurrence("+");
+        result.removeFirstOccurrence("");
+        if (result.isEmpty() || result.stream().filter(a -> !a.equals("+") && !a.equals("-") && !a.equals(".")).allMatch(a->a.equals("0"))) {
+            result.clear();
             result.add("0");
             result.add(".");
             result.add("0");
             return result;
         }
-
-        result = new ArrayDeque<>(number);
-        result.removeFirstOccurrence("-");
-        result.removeFirstOccurrence("+");
         
         while (result.getFirst().equals("0")) result.removeFirst();
         if (!result.contains(".")) result.addLast(".");

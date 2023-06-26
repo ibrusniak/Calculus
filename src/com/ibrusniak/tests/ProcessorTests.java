@@ -276,6 +276,52 @@ public class ProcessorTests {
         processor.widenNumbers(op1, op2);
         assertEquals("-1500.00000", arrayDequeToString(op1));
         assertEquals("-0000.10001", arrayDequeToString(op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "-0.10001");
+        processor.widenNumbers(op1, op2);
+        assertEquals("0.00000", arrayDequeToString(op1));
+        assertEquals("-0.10001", arrayDequeToString(op2));
+    }
+
+    @Test
+    public void compareTest1Equalss() {
+
+        // op1.clear();
+        // op2.clear();
+        // assertEquals(0, processor.compare(op1, op2));
+
+        // refillFromString(op1, "");
+        // refillFromString(op2, "");
+        // assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "");
+        refillFromString(op2, "-0");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "-0");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "00");
+        refillFromString(op2, "-0");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "0.00000");
+        refillFromString(op2, "-0000");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "-0");
+        refillFromString(op2, "00.00");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "1000");
+        refillFromString(op2, "1000.000000");
+        assertEquals(0, processor.compare(op1, op2));
+
+        refillFromString(op1, "0");
+        refillFromString(op2, "-0");
+        assertEquals(0, processor.compare(op1, op2));
     }
 
     private void refillFromString(ArrayDeque<String> op, String str) {

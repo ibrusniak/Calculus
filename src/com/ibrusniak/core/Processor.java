@@ -43,6 +43,22 @@ public class Processor {
 
         widenNumbers(op1, op2);
 
+        if (!op1.contains("-") && op2.contains("-")) return 1;
+        if (op1.contains("-") && !op2.contains("-")) return -1;
+        if (op1.contains("-") && op2.contains("-")) {
+            return -moduleCompare(op1, op2);
+        }
+        return moduleCompare(op1, op2);
+    }
+
+    private int moduleCompare(ArrayDeque<String> operand1, ArrayDeque<String> operand2) {
+
+        ArrayDeque<String> op1 = new ArrayDeque<>(operand1);
+        ArrayDeque<String> op2 = new ArrayDeque<>(operand2);
+
+        op1.removeFirstOccurrence("-");
+        op2.removeFirstOccurrence("-");
+
         String nextOp1 = "", nextOp2 = "";
         while ((nextOp1 = op1.pollFirst()) != null) {
 
@@ -54,7 +70,6 @@ public class Processor {
                 return -1;
             }
         }
-
         return 0;
     }
 
@@ -101,8 +116,8 @@ public class Processor {
         argument2.clear();
         arg1.stream().forEach(argument1::add);
         arg2.stream().forEach(argument2::add);
-        if (arg1HasSign) argument1.addFirst("-");
-        if (arg2HasSign) argument2.addFirst("-");
+        if (arg1HasSign && !arg1.stream().reduce((a,b)->a+b).get().equals("0.0")) argument1.addFirst("-");
+        if (arg2HasSign && !arg2.stream().reduce((a,b)->a+b).get().equals("0.0")) argument2.addFirst("-");
     }
 
     /**

@@ -287,13 +287,13 @@ public class ProcessorTests {
     @Test
     public void compareTest1Equalss() {
 
-        // op1.clear();
-        // op2.clear();
-        // assertEquals(0, processor.compare(op1, op2));
+        op1.clear();
+        op2.clear();
+        assertEquals(0, processor.compare(op1, op2));
 
-        // refillFromString(op1, "");
-        // refillFromString(op2, "");
-        // assertEquals(0, processor.compare(op1, op2));
+        refillFromString(op1, "");
+        refillFromString(op2, "");
+        assertEquals(0, processor.compare(op1, op2));
 
         refillFromString(op1, "");
         refillFromString(op2, "-0");

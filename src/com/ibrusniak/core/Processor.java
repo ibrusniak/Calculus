@@ -36,6 +36,53 @@ import java.util.Arrays;
  */
 public class Processor {
 
+    public void widenNumbers(ArrayDeque<String> argument1, ArrayDeque<String> argument2) {
+
+        ArrayDeque<String> arg1 = normalize(argument1);
+        ArrayDeque<String> arg2 = normalize(argument2);
+
+        arg1.removeFirstOccurrence("-");
+        arg2.removeFirstOccurrence("-");
+
+        String arg1String = numToString(arg1);
+        String arg2String = numToString(arg2);
+
+        int arg1IntegerPartLength = arg1String.split("\\.")[0].length();
+        int arg2IntegerPartLength = arg2String.split("\\.")[0].length();
+
+        if (arg1IntegerPartLength > arg2IntegerPartLength) {
+            do {
+                arg2.addFirst("0");
+            } while (++arg2IntegerPartLength < arg1IntegerPartLength);
+        } else if (arg1IntegerPartLength < arg2IntegerPartLength) {
+            do {
+                arg1.addFirst("0");
+            } while (++arg1IntegerPartLength < arg2IntegerPartLength);
+        }
+
+        int arg1FracPartLength = arg1String.split("\\.")[1].length();
+        int arg2FracPartLength = arg2String.split("\\.")[1].length();
+
+        if (arg1FracPartLength < arg2FracPartLength) {
+            do {
+                arg1.addLast("0");
+            } while (++arg1FracPartLength < arg2FracPartLength);
+        } else if (arg1FracPartLength > arg2FracPartLength) {
+             do {
+                arg2.addLast("0");
+            } while (++arg2FracPartLength < arg1FracPartLength);
+        }
+
+        boolean arg1HasSign = argument1.contains("-");
+        boolean arg2HasSign = argument2.contains("-");
+        argument1.clear();
+        argument2.clear();
+        arg1.stream().forEach(argument1::add);
+        arg2.stream().forEach(argument2::add);
+        if (arg1HasSign) argument1.addFirst("-");
+        if (arg2HasSign) argument2.addFirst("-");
+    }
+
     /**
      * Transfom "number": 0 -> 0.0, 0. -> 0.0, .0 -> 0.0
      * -0 -> -0.0, -0. -> -0.0, -.0 -> 0.0
@@ -90,5 +137,9 @@ public class Processor {
         if (stringRepresentation != null &&
             stringRepresentation.matches(regexp)) return true;
         return false;
+    }
+
+    private String numToString(ArrayDeque<String> number) {
+        return number.stream().reduce((e1, e2) -> e1 + e2).get();
     }
 }

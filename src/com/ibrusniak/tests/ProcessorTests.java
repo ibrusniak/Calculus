@@ -250,6 +250,34 @@ public class ProcessorTests {
         assertEquals("0.0", normalized);
     }
 
+    @Test
+    public void widenNumbersTest1() {
+
+        refillFromString(op1, "5");
+        refillFromString(op2, "0.1");
+        processor.widenNumbers(op1, op2);
+        assertEquals("5.0", arrayDequeToString(op1));
+        assertEquals("0.1", arrayDequeToString(op2));
+
+        refillFromString(op1, "50000");
+        refillFromString(op2, "0.1");
+        processor.widenNumbers(op1, op2);
+        assertEquals("50000.0", arrayDequeToString(op1));
+        assertEquals("00000.1", arrayDequeToString(op2));
+
+        refillFromString(op1, "-1655");
+        refillFromString(op2, "0.1");
+        processor.widenNumbers(op1, op2);
+        assertEquals("-1655.0", arrayDequeToString(op1));
+        assertEquals("0000.1", arrayDequeToString(op2));
+
+        refillFromString(op1, "-1500");
+        refillFromString(op2, "-0.10001");
+        processor.widenNumbers(op1, op2);
+        assertEquals("-1500.00000", arrayDequeToString(op1));
+        assertEquals("-0000.10001", arrayDequeToString(op2));
+    }
+
     private void refillFromString(ArrayDeque<String> op, String str) {
         op.clear();
         Arrays.stream(str.split("")).forEach(op::add);
